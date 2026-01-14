@@ -113,3 +113,69 @@ export async function shareResult(resultTitle, quizTitle, quizId) {
     return false
   }
 }
+
+/**
+ * Downloads quiz result as PNG image
+ * @param {HTMLElement} element - The DOM element to capture
+ * @param {string} quizTitle - The title of the quiz
+ * @param {string} resultTitle - The title of the result
+ * @param {string} backgroundColor - Background color for the image
+ * @returns {Promise<boolean>} - True if download was successful
+ */
+export async function downloadResultImage(element, quizTitle, resultTitle, backgroundColor) {
+  if (!element) {
+    console.error('Element not found for image capture')
+    return false
+  }
+
+  // Store original styles
+  const originalPadding = element.style.padding
+  const originalBoxSizing = element.style.boxSizing
+
+  try {
+    const { toPng } = await import('html-to-image')
+    
+    // Temporarily add padding for the image (this won't affect the displayed content visually)
+    // Using box-sizing: border-box ensures padding is included in the capture
+    element.style.padding = '40px'
+    element.style.boxSizing = 'border-box'
+    
+    const dataUrl = await toPng(element, {
+      backgroundColor: backgroundColor,
+      pixelRatio: 2,
+      quality: 1.0
+    })
+
+    // Restore original styles
+    element.style.padding = originalPadding
+    element.style.boxSizing = originalBoxSizing
+
+    // Sanitize filename: replace spaces and special chars with hyphens, lowercase
+    const sanitizeFilename = (str) => {
+      return str
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+    }
+
+    const sanitizedQuizTitle = sanitizeFilename(quizTitle)
+    const sanitizedResultTitle = sanitizeFilename(resultTitle)
+    const filename = `${sanitizedQuizTitle}-${sanitizedResultTitle}.png`
+
+    // Create temporary anchor element to trigger download
+    const link = document.createElement('a')
+    link.download = filename
+    link.href = dataUrl
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    return true
+  } catch (error) {
+    console.error('Error downloading image:', error)
+    // Ensure styles are restored even on error
+    element.style.padding = originalPadding
+    element.style.boxSizing = originalBoxSizing
+    return false
+  }
+}

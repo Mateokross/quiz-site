@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { copyUrl, copyText, shareOnTwitter, shareOnFacebook } from '../utils/shareResult'
+import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, downloadResultImage } from '../utils/shareResult'
 
 export default function Results({ 
   resultCategory, 
@@ -10,7 +10,9 @@ export default function Results({
 }) {
   const [shareResultTooltip, setShareResultTooltip] = useState('Share result')
   const [copyTextTooltip, setCopyTextTooltip] = useState('Copy text')
+  const [downloadImageTooltip, setDownloadImageTooltip] = useState('Download image')
   const copyButtonRef = useRef(null)
+  const resultsRef = useRef(null)
 
   const result = quizConfig?.results?.[resultCategory]
   const quizTitle = quizConfig?.title || 'Quiz'
@@ -63,6 +65,23 @@ export default function Results({
     }
   }
 
+  const handleDownloadImage = async () => {
+    setDownloadImageTooltip('Downloading...')
+    const success = await downloadResultImage(
+      resultsRef.current,
+      quizTitle,
+      result?.title || 'Unknown',
+      backgroundColor
+    )
+    if (success) {
+      setDownloadImageTooltip('Downloaded!')
+      setTimeout(() => setDownloadImageTooltip('Download image'), 2000)
+    } else {
+      setDownloadImageTooltip('Download failed')
+      setTimeout(() => setDownloadImageTooltip('Download image'), 2000)
+    }
+  }
+
   return (
     <div 
       className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
@@ -70,6 +89,7 @@ export default function Results({
     >
       <div className="max-w-2xl mx-auto w-full text-center">
         <div 
+          ref={resultsRef}
           className="mb-8 animate-fade-in"
           style={{ animation: 'fadeIn 0.6s ease-in' }}
         >
@@ -232,6 +252,52 @@ export default function Results({
                 </button>
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
                   {copyTextTooltip}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
+                </div>
+              </div>
+
+              <div className="relative group">
+                <button
+                  onClick={handleDownloadImage}
+                  className="copy-text-button"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    outline: 'none',
+                    minHeight: '48px',
+                    minWidth: '48px',
+                    borderColor: primaryColor,
+                    borderWidth: '1.5px',
+                    borderStyle: 'solid',
+                    color: primaryColor,
+                    backgroundColor: backgroundColor,
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                  }}
+                  aria-label="Download image"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                </button>
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
+                  {downloadImageTooltip}
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
                 </div>
               </div>
