@@ -6,7 +6,7 @@ export function useQuiz(quizConfig) {
   const [answers, setAnswers] = useState({}) // questionId -> answerIndex
   const [scores, setScores] = useState({}) // category -> count
   const [isComplete, setIsComplete] = useState(false)
-  const [resultRevealState, setResultRevealState] = useState('ready') // 'ready' | 'loading' | 'revealed'
+  const [resultRevealState, setResultRevealState] = useState('ready') // 'ready' | 'loading' | 'ready-to-reveal' | 'revealed'
   const [result, setResult] = useState(null)
 
   // Initialize scores object
@@ -105,11 +105,15 @@ export function useQuiz(quizConfig) {
     const winningCategory = calculateResult(scores, resultOrder)
     setResult(winningCategory)
 
-    // Show loading animation for 5 seconds
+    // Show loading animation for 5 seconds, then show ready-to-reveal screen
     setTimeout(() => {
-      setResultRevealState('revealed')
+      setResultRevealState('ready-to-reveal')
     }, 5000)
   }, [quizConfig, scores])
+
+  const revealResult = useCallback(() => {
+    setResultRevealState('revealed')
+  }, [])
 
   const handleAnswerSelect = useCallback((questionId, answerIndex) => {
     // Update answers state
@@ -159,6 +163,7 @@ export function useQuiz(quizConfig) {
     goToQuestion,
     getNextUnansweredQuestion,
     triggerResultReveal,
+    revealResult,
     resetQuiz,
   }
 }

@@ -4,6 +4,7 @@ import { useQuiz } from '../hooks/useQuiz'
 import Question from './Question'
 import Results from './Results'
 import LoadingSpinner from './LoadingSpinner'
+import ResultReady from './ResultReady'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -26,6 +27,7 @@ export default function Quiz() {
     result,
     selectAnswer,
     goToQuestion,
+    revealResult,
     resetQuiz,
   } = useQuiz(quizConfig)
 
@@ -84,6 +86,17 @@ export default function Quiz() {
         resultCategory={result}
         quizConfig={quizConfig}
         onRestart={resetQuiz}
+        primaryColor={primaryColor}
+        backgroundColor={backgroundColor}
+      />
+    )
+  }
+
+  // Show result ready screen
+  if (isComplete && resultRevealState === 'ready-to-reveal') {
+    return (
+      <ResultReady
+        onContinue={revealResult}
         primaryColor={primaryColor}
         backgroundColor={backgroundColor}
       />
