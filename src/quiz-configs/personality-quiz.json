@@ -1,0 +1,82 @@
+{
+  "id": "personality-quiz",
+  "title": "What's Your Personality Type?",
+  "theme": {
+    "primaryColor": "#000000",
+    "backgroundColor": "#FFFFFF"
+  },
+  "results": {
+    "A": {
+      "title": "Explorer",
+      "description": "You seek novelty and experiences. You're always looking for the next adventure and thrive on discovering new places, ideas, and opportunities. Your curiosity drives you forward, and you're not afraid to step outside your comfort zone."
+    },
+    "B": {
+      "title": "Planner",
+      "description": "You value structure and clarity. You feel most comfortable when you have a plan and know what to expect. Your organized approach helps you achieve your goals efficiently, and you find satisfaction in completing tasks methodically."
+    },
+    "C": {
+      "title": "Thinker",
+      "description": "You are analytical and reflective. You enjoy deep conversations and spending time with your thoughts. You value knowledge and understanding, often taking time to consider all angles before making decisions."
+    },
+    "D": {
+      "title": "Connector",
+      "description": "You thrive on relationships. Your strength lies in bringing people together and building meaningful connections. You're empathetic, social, and find fulfillment in helping others and being part of a community."
+    }
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "text": "How do you prefer to spend a free weekend?",
+      "answers": [
+        { "text": "Exploring somewhere new", "result": "A" },
+        { "text": "Planning the week ahead", "result": "B" },
+        { "text": "Reading or learning", "result": "C" },
+        { "text": "Meeting friends", "result": "D" }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "When facing a problem, you tend to:",
+      "answers": [
+        { "text": "Try a new approach", "result": "A" },
+        { "text": "Create a step-by-step plan", "result": "B" },
+        { "text": "Analyze it thoroughly first", "result": "C" },
+        { "text": "Discuss it with others", "result": "D" }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "Your ideal work environment is:",
+      "answers": [
+        { "text": "Varied and dynamic", "result": "A" },
+        { "text": "Organized and structured", "result": "B" },
+        { "text": "Quiet and focused", "result": "C" },
+        { "text": "Collaborative and social", "result": "D" }
+      ]
+    },
+    {
+      "id": "q4",
+      "text": "What motivates you most?",
+      "answers": [
+        { "text": "New experiences and challenges", "result": "A" },
+        { "text": "Achieving goals and milestones", "result": "B" },
+        { "text": "Understanding and knowledge", "result": "C" },
+        { "text": "Connecting with people", "result": "D" }
+      ]
+    },
+    {
+      "id": "q5",
+      "text": "In a group project, you typically:",
+      "answers": [
+        { "text": "Suggest creative solutions", "result": "A" },
+        { "text": "Organize tasks and timelines", "result": "B" },
+        { "text": "Research and analyze options", "result": "C" },
+        { "text": "Facilitate team communication", "result": "D" }
+      ]
+    }
+  ],
+  "cta": {
+    "text": "Learn More",
+    "externalLink": "https://example.com"
+  }
+}
