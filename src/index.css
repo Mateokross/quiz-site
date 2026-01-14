@@ -18,7 +18,6 @@ body {
 button:focus,
 button:focus-visible {
   outline: none !important;
-  border: none;
 }
 
 button:focus-visible {
