@@ -1,18 +1,52 @@
-export default function LoadingSpinner({ primaryColor = '#000000' }) {
+export default function LoadingSpinner({ 
+  primaryColor = '#000000',
+  backgroundColor = '#FFFFFF'
+}) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
-      <div 
-        className="w-16 h-16 border-4 border-gray-200 border-t-current rounded-full animate-spin"
-        style={{ borderTopColor: primaryColor }}
-        role="status"
-        aria-label="Calculating your result"
-      />
-      <p className="mt-6 text-lg font-medium" style={{ color: primaryColor }}>
-        Calculating your result...
-      </p>
-      <p className="mt-2 text-sm text-gray-600">
-        This may take a moment
-      </p>
+    <div 
+      className="min-h-screen flex flex-col items-center justify-center p-4"
+      style={{ backgroundColor }}
+    >
+      <div className="max-w-md mx-auto text-center animate-fade-in">
+        <div className="mb-8">
+          <div 
+            className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center animate-spin"
+            style={{ 
+              borderWidth: '4px',
+              borderStyle: 'solid',
+              borderColor: '#E5E7EB',
+              borderTopColor: primaryColor,
+            }}
+            role="status"
+            aria-label="Calculating your result"
+          />
+          <h1 
+            className="text-3xl md:text-4xl font-bold mb-4"
+            style={{ color: primaryColor }}
+          >
+            Calculating your result...
+          </h1>
+          <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+            This may take a moment
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.6s ease-in;
+        }
+      `}</style>
     </div>
   )
 }

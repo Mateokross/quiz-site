@@ -98,17 +98,20 @@ export function useQuiz(quizConfig) {
   }, [answers, quizConfig])
 
   const triggerResultReveal = useCallback(() => {
-    setResultRevealState('loading')
-    
-    // Calculate result
-    const resultOrder = Object.keys(quizConfig?.results || {})
-    const winningCategory = calculateResult(scores, resultOrder)
-    setResult(winningCategory)
-
-    // Show loading animation for 5 seconds, then show ready-to-reveal screen
+    // Add delay before showing loading screen (similar to question transition delay)
     setTimeout(() => {
-      setResultRevealState('ready-to-reveal')
-    }, 5000)
+      setResultRevealState('loading')
+      
+      // Calculate result
+      const resultOrder = Object.keys(quizConfig?.results || {})
+      const winningCategory = calculateResult(scores, resultOrder)
+      setResult(winningCategory)
+
+      // Show loading animation for 5 seconds, then show ready-to-reveal screen
+      setTimeout(() => {
+        setResultRevealState('ready-to-reveal')
+      }, 5000)
+    }, 1000) // Same delay as question transition
   }, [quizConfig, scores])
 
   const revealResult = useCallback(() => {

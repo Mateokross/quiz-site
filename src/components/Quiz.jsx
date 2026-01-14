@@ -105,7 +105,12 @@ export default function Quiz() {
 
   // Show loading spinner during result reveal
   if (isComplete && resultRevealState === 'loading') {
-    return <LoadingSpinner primaryColor={primaryColor} />
+    return (
+      <LoadingSpinner 
+        primaryColor={primaryColor}
+        backgroundColor={backgroundColor}
+      />
+    )
   }
 
   // Show questions

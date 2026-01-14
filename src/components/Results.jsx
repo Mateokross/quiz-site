@@ -65,29 +65,9 @@ export default function Results({
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative"
+      className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
       style={{ backgroundColor }}
     >
-      <button
-        onClick={onRestart}
-        className="absolute top-4 left-4 flex items-center gap-2 text-base font-medium transition-opacity hover:opacity-70 focus:outline-none"
-        style={{
-          color: primaryColor,
-          backgroundColor: 'transparent',
-          border: 'none',
-          padding: 0,
-          cursor: 'pointer',
-        }}
-        aria-label="Retake quiz"
-      >
-        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-          <path d="M21 3v5h-5"></path>
-          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-          <path d="M3 21v-5h5"></path>
-        </svg>
-        <span>Retake Quiz</span>
-      </button>
       <div className="max-w-2xl mx-auto w-full text-center">
         <div 
           className="mb-8 animate-fade-in"
@@ -103,6 +83,27 @@ export default function Results({
             {result?.description || 'No description available.'}
           </p>
         </div>
+
+        <button
+          onClick={onRestart}
+          className="flex items-center gap-2 text-base font-medium transition-opacity hover:opacity-70 focus:outline-none mx-auto mb-8"
+          style={{
+            color: primaryColor,
+            backgroundColor: 'transparent',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+          }}
+          aria-label="Retake quiz"
+        >
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M3 21v-5h5"></path>
+          </svg>
+          <span>Retake Quiz</span>
+        </button>
 
         <div className="flex flex-col gap-6 justify-center items-center mt-8">
           <div className="flex flex-col gap-3 justify-center items-center">
