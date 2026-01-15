@@ -3,7 +3,8 @@
   "title": "What's Your Personality Type?",
   "theme": {
     "primaryColor": "#000000",
-    "backgroundColor": "#FFFFFF"
+    "backgroundColor": "#FFFFFF",
+    "progressColor": "#6366F1"
   },
   "results": {
     "A": {

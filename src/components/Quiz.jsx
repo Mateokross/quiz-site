@@ -78,6 +78,12 @@ export default function Quiz() {
 
   const primaryColor = quizConfig.theme?.primaryColor || '#000000'
   const backgroundColor = quizConfig.theme?.backgroundColor || '#FFFFFF'
+  const progressColor = quizConfig.theme?.progressColor || '#3B82F6' // Default blue
+
+  // Calculate progress percentage
+  const answeredCount = Object.keys(answers).length
+  const totalQuestions = quizConfig.questions?.length || 0
+  const progressPercentage = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0
 
   // Show results if complete and revealed
   if (isComplete && resultRevealState === 'revealed' && result) {
@@ -128,10 +134,28 @@ export default function Quiz() {
 
   return (
     <div style={{ backgroundColor }}>
-      <div className="sticky top-0 z-10 p-4 bg-white bg-opacity-90 backdrop-blur-sm border-b border-gray-200">
-        <h1 className="text-lg font-semibold text-center" style={{ color: primaryColor }}>
-          {quizConfig.title}
-        </h1>
+      <div className="sticky top-0 z-10 bg-white bg-opacity-90 backdrop-blur-sm border-b border-gray-200">
+        <div className="p-4">
+          <h1 className="text-lg font-semibold text-center" style={{ color: primaryColor }}>
+            {quizConfig.title}
+          </h1>
+        </div>
+        {/* Progress Bar */}
+        <div className="w-full relative">
+          {/* Progress Percentage Text */}
+          <div className="absolute top-0 right-4 -mt-5 text-xs text-gray-500">
+            {progressPercentage}%
+          </div>
+          <div className="w-full h-1 bg-gray-200">
+            <div
+              className="h-full transition-all duration-300 ease-out"
+              style={{
+                width: `${progressPercentage}%`,
+                backgroundColor: progressColor,
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       {quizConfig.questions.map((question, index) => {
