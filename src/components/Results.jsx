@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, downloadResultImage } from '../utils/shareResult'
+import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, shareOnWhatsApp, downloadResultImage, shareResult } from '../utils/shareResult'
 
 export default function Results({ 
   resultCategory, 
@@ -11,7 +11,9 @@ export default function Results({
   const [shareResultTooltip, setShareResultTooltip] = useState('Share result')
   const [copyTextTooltip, setCopyTextTooltip] = useState('Copy text')
   const [downloadImageTooltip, setDownloadImageTooltip] = useState('Download image')
+  const [copyUrlTooltip, setCopyUrlTooltip] = useState('Copy URL')
   const copyButtonRef = useRef(null)
+  const copyUrlButtonRef = useRef(null)
   const resultsRef = useRef(null)
 
   const result = quizConfig?.results?.[resultCategory]
@@ -41,24 +43,51 @@ export default function Results({
     }
   }, [primaryColor])
 
+  useEffect(() => {
+    const button = copyUrlButtonRef.current
+    if (!button) return
+
+    const maintainBorder = () => {
+      button.style.border = `1.5px solid ${primaryColor}`
+    }
+
+    button.addEventListener('focus', maintainBorder)
+    button.addEventListener('blur', maintainBorder)
+    button.addEventListener('mousedown', maintainBorder)
+    button.addEventListener('mouseup', maintainBorder)
+    button.addEventListener('click', maintainBorder)
+
+    return () => {
+      button.removeEventListener('focus', maintainBorder)
+      button.removeEventListener('blur', maintainBorder)
+      button.removeEventListener('mousedown', maintainBorder)
+      button.removeEventListener('mouseup', maintainBorder)
+      button.removeEventListener('click', maintainBorder)
+    }
+  }, [primaryColor])
+
   const handleShareResult = async () => {
-    const success = await copyUrl(quizId)
+    const success = await shareResult(result?.title || '', quizTitle, quizId, resultCategory)
     if (success) {
-      setShareResultTooltip('URL copied!')
+      setShareResultTooltip('Shared!')
       setTimeout(() => setShareResultTooltip('Share result'), 2000)
     }
   }
 
   const handleTwitterShare = () => {
-    shareOnTwitter(result?.title || '', quizTitle, quizId)
+    shareOnTwitter(result?.title || '', quizTitle, quizId, resultCategory)
   }
 
   const handleFacebookShare = () => {
-    shareOnFacebook(quizId)
+    shareOnFacebook(quizId, resultCategory)
+  }
+
+  const handleWhatsAppShare = () => {
+    shareOnWhatsApp(result?.title || '', quizTitle, quizId, resultCategory)
   }
 
   const handleCopyText = async () => {
-    const success = await copyText(result?.title || '', result?.description || '')
+    const success = await copyText(result?.title || '', result?.description || '', quizTitle, quizId, resultCategory)
     if (success) {
       setCopyTextTooltip('Text copied!')
       setTimeout(() => setCopyTextTooltip('Copy text'), 2000)
@@ -71,7 +100,9 @@ export default function Results({
       resultsRef.current,
       quizTitle,
       result?.title || 'Unknown',
-      backgroundColor
+      backgroundColor,
+      quizId,
+      primaryColor
     )
     if (success) {
       setDownloadImageTooltip('Downloaded!')
@@ -79,6 +110,14 @@ export default function Results({
     } else {
       setDownloadImageTooltip('Download failed')
       setTimeout(() => setDownloadImageTooltip('Download image'), 2000)
+    }
+  }
+
+  const handleCopyUrl = async () => {
+    const success = await copyUrl(quizId, resultCategory)
+    if (success) {
+      setCopyUrlTooltip('URL copied!')
+      setTimeout(() => setCopyUrlTooltip('Copy URL'), 2000)
     }
   }
 
@@ -150,12 +189,38 @@ export default function Results({
                   aria-label="Share result"
                 >
                   <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                    <polyline points="16 6 12 2 8 6"></polyline>
+                    <line x1="12" y1="2" x2="12" y2="15"></line>
                   </svg>
                 </button>
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
                   {shareResultTooltip}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
+                </div>
+              </div>
+
+              <div className="relative group">
+                <button
+                  onClick={handleWhatsAppShare}
+                  className={`
+                    w-12 h-12 rounded-full flex items-center justify-center
+                    transition-all focus:outline-none
+                    hover:opacity-90 hover:shadow-md
+                    min-h-[48px] min-w-[48px]
+                  `}
+                  style={{
+                    backgroundColor: '#25D366',
+                    color: '#FFFFFF',
+                  }}
+                  aria-label="Share on WhatsApp"
+                >
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                </button>
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
+                  WhatsApp
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
                 </div>
               </div>
@@ -170,17 +235,17 @@ export default function Results({
                     min-h-[48px] min-w-[48px]
                   `}
                   style={{
-                    backgroundColor: '#1DA1F2',
+                    backgroundColor: '#000000',
                     color: '#FFFFFF',
                   }}
-                  aria-label="Share on Twitter"
+                  aria-label="Share on X"
                 >
                   <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                   </svg>
                 </button>
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
-                  Twitter
+                  X
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
                 </div>
               </div>
@@ -298,6 +363,52 @@ export default function Results({
                 </button>
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
                   {downloadImageTooltip}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
+                </div>
+              </div>
+
+              <div className="relative group" style={{ display: 'none' }}>
+                <button
+                  ref={copyUrlButtonRef}
+                  onClick={handleCopyUrl}
+                  className="copy-text-button"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    outline: 'none',
+                    minHeight: '48px',
+                    minWidth: '48px',
+                    borderColor: primaryColor,
+                    borderWidth: '1.5px',
+                    borderStyle: 'solid',
+                    color: primaryColor,
+                    backgroundColor: backgroundColor,
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                  }}
+                  aria-label="Copy URL"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </svg>
+                </button>
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 rounded text-sm text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg" style={{ backgroundColor: '#333' }}>
+                  {copyUrlTooltip}
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2" style={{ borderTop: '6px solid #333', borderLeft: '6px solid transparent', borderRight: '6px solid transparent' }}></div>
                 </div>
               </div>
