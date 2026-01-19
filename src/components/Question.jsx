@@ -1,13 +1,43 @@
+import { useMemo } from 'react'
+
+// Fisher-Yates shuffle algorithm
+function shuffleArray(array) {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
 export default function Question({ 
   question, 
   selectedAnswerIndex, 
   onSelectAnswer,
-  primaryColor = '#000000',
-  backgroundColor = '#FFFFFF'
+  accentColor = '#000000',
+  backgroundColor = '#FFFFFF',
+  selectedButtonColor = '#000000'
 }) {
-  const handleClick = (answerIndex) => {
-    if (selectedAnswerIndex === answerIndex) return // Already selected
-    onSelectAnswer(question.id, answerIndex)
+  // Shuffle answers once per question, maintaining original index mapping
+  const shuffledAnswers = useMemo(() => {
+    if (!question.answers) return []
+    
+    // Create array with original indices
+    const answersWithIndex = question.answers.map((answer, originalIndex) => ({
+      ...answer,
+      originalIndex
+    }))
+    
+    // Shuffle the array
+    return shuffleArray(answersWithIndex)
+  }, [question.id]) // Re-shuffle only when question changes
+
+  const handleClick = (shuffledIndex) => {
+    if (selectedAnswerIndex === shuffledIndex) return // Already selected
+    
+    // Get the original index from the shuffled answer
+    const originalIndex = shuffledAnswers[shuffledIndex].originalIndex
+    onSelectAnswer(question.id, originalIndex)
   }
 
   return (
@@ -17,17 +47,18 @@ export default function Question({
       style={{ backgroundColor }}
     >
       <div className="max-w-2xl mx-auto w-full">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center" style={{ color: primaryColor }}>
+        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center" style={{ color: accentColor }}>
           {question.text}
         </h2>
         
         <div className="space-y-4">
-          {question.answers.map((answer, index) => {
-            const isSelected = selectedAnswerIndex === index
+          {shuffledAnswers.map((answer, shuffledIndex) => {
+            // Check if this shuffled answer corresponds to the selected original index
+            const isSelected = selectedAnswerIndex === answer.originalIndex
             return (
               <button
-                key={index}
-                onClick={() => handleClick(index)}
+                key={shuffledIndex}
+                onClick={() => handleClick(shuffledIndex)}
                 className={`
                   w-full p-4 md:p-6 text-left rounded-lg border-2 transition-all
                   focus:outline-none
@@ -38,9 +69,9 @@ export default function Question({
                   }
                 `}
                 style={{
-                  backgroundColor: isSelected ? primaryColor : backgroundColor,
-                  color: isSelected ? backgroundColor : primaryColor,
-                  borderColor: primaryColor,
+                  backgroundColor: isSelected ? selectedButtonColor : backgroundColor,
+                  color: isSelected ? backgroundColor : accentColor,
+                  borderColor: accentColor,
                   borderOpacity: isSelected ? 1 : 0.3,
                 }}
                 aria-pressed={isSelected}

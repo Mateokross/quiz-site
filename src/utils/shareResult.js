@@ -145,10 +145,10 @@ export async function shareResult(resultTitle, quizTitle, quizId, resultCategory
  * @param {string} resultTitle - The title of the result
  * @param {string} backgroundColor - Background color for the image
  * @param {string} quizId - The quiz ID for generating the quiz link
- * @param {string} primaryColor - The primary color for styling the footer text
+ * @param {string} accentColor - The primary color for styling the footer text
  * @returns {Promise<boolean>} - True if download was successful
  */
-export async function downloadResultImage(element, quizTitle, resultTitle, backgroundColor, quizId, primaryColor = '#000000') {
+export async function downloadResultImage(element, quizTitle, resultTitle, backgroundColor, quizId, accentColor = '#000000') {
   if (!element) {
     console.error('Element not found for image capture')
     return false
@@ -205,7 +205,7 @@ export async function downloadResultImage(element, quizTitle, resultTitle, backg
     ctx.stroke()
 
     // Draw footer text
-    ctx.fillStyle = primaryColor
+    ctx.fillStyle = accentColor
     ctx.font = '600 16px sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'

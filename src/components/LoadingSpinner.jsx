@@ -1,6 +1,7 @@
 export default function LoadingSpinner({ 
-  primaryColor = '#000000',
-  backgroundColor = '#FFFFFF'
+  accentColor = '#000000',
+  backgroundColor = '#FFFFFF',
+  progressColor = '#3B82F6'
 }) {
   return (
     <div 
@@ -15,14 +16,14 @@ export default function LoadingSpinner({
               borderWidth: '4px',
               borderStyle: 'solid',
               borderColor: '#E5E7EB',
-              borderTopColor: primaryColor,
+              borderTopColor: progressColor,
             }}
             role="status"
             aria-label="Calculating your result"
           />
           <h1 
             className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ color: primaryColor }}
+            style={{ color: accentColor }}
           >
             Calculating your result...
           </h1>

@@ -1,0 +1,233 @@
+{
+    "id": "presidents",
+    "title": "Which President Are You?",
+    "theme": {
+        "accentColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "progressColor": "#EF4444",
+        "navbarBackgroundColor": "#0C0644",
+        "navbarTitleColor": "#FFFFFF",
+        "selectedButtonColor": "#EF4444"
+    },
+    "results": {
+    "A": {
+        "title": "Donald Trump",
+        "description": "You are bold, instinctive, and unapologetic in how you move through the world. You don’t wait for permission, consensus, or perfect conditions. You act, adjust, and push forward with confidence. You thrive in chaotic environments where others hesitate, and you’re energized by competition, attention, and high stakes. You believe leadership means taking up space, setting the tone, and forcing momentum when things stall.\n\nYou’re at your best when boldness matters more than polish. You spot opportunities quickly and are willing to break norms if they slow you down. People may find you polarizing, but they never overlook you."
+    },
+    "B": {
+        "title": "Barack Obama",
+        "description": "You lead through ideas, communication, and perspective. You naturally see the bigger picture and help others understand it too. People trust you because you’re thoughtful, composed under pressure, and capable of turning complexity into clarity. You believe influence comes from bringing people along, not forcing them.\n\nYou excel at shaping direction, setting culture, and aligning people around shared goals. You think long-term and care deeply about purpose and legacy. When tension rises, you don’t escalate. You elevate the conversation."
+    },
+    "C": {
+        "title": "Nicolás Maduro",
+        "description": "You are resilient under pressure and difficult to shake. When situations become unstable, you don’t panic. You endure. You adapt. You hold your ground. You rely on inner conviction, loyalty, and persistence more than external validation. Survival itself is a form of strength for you.\n\nYou’re especially strong in environments where others would collapse or give up. You may not seek approval, but you have an exceptional ability to last, resist, and push through adversity."
+    },
+    "D": {
+        "title": "Vladimir Putin",
+        "description": "You think strategically, quietly, and several steps ahead. You value control, leverage, and timing over visibility. You rarely act emotionally and prefer to observe, calculate, and move only when the advantage is clear. You believe real power doesn’t need to announce itself.\n\nYou’re strongest behind the scenes, shaping outcomes through positioning rather than force. Stability, influence, and long-term control matter more to you than short-term wins."
+    }
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "text": "When you walk into a room full of strangers, what do you do first?",
+        "answers": [
+          { "text": "Take charge and make yourself known", "result": "A" },
+          { "text": "Observe quietly and assess power dynamics", "result": "D" },
+          { "text": "Connect with someone one-on-one", "result": "B" },
+          { "text": "Wait and see how things unfold", "result": "C" }
+        ]
+      },
+      {
+        "id": "q2",
+        "text": "A big decision must be made quickly. You:",
+        "answers": [
+          { "text": "Trust your instincts and act fast", "result": "A" },
+          { "text": "Think about long-term consequences", "result": "D" },
+          { "text": "Consider how people will react", "result": "B" },
+          { "text": "Choose what protects your position", "result": "C" }
+        ]
+      },
+      {
+        "id": "q3",
+        "text": "How do you respond to public criticism?",
+        "answers": [
+          { "text": "Push back aggressively", "result": "A" },
+          { "text": "Respond calmly and thoughtfully", "result": "B" },
+          { "text": "Ignore it and stay the course", "result": "C" },
+          { "text": "Use it to your strategic advantage", "result": "D" }
+        ]
+      },
+      {
+        "id": "q4",
+        "text": "Your leadership style is best described as:",
+        "answers": [
+          { "text": "Inspirational and unifying", "result": "B" },
+          { "text": "Dominant and forceful", "result": "A" },
+          { "text": "Controlled and strategic", "result": "D" },
+          { "text": "Defensive but resilient", "result": "C" }
+        ]
+      },
+      {
+        "id": "q5",
+        "text": "When things start to go wrong, you:",
+        "answers": [
+          { "text": "Reframe the narrative", "result": "B" },
+          { "text": "Double down and escalate", "result": "A" },
+          { "text": "Clamp down and regain control", "result": "D" },
+          { "text": "Endure and adapt quietly", "result": "C" }
+        ]
+      },
+      {
+        "id": "q6",
+        "text": "What matters most to you as a leader?",
+        "answers": [
+          { "text": "Winning and dominance", "result": "A" },
+          { "text": "Legacy and ideals", "result": "B" },
+          { "text": "Survival against pressure", "result": "C" },
+          { "text": "Power and control", "result": "D" }
+        ]
+      },
+      {
+        "id": "q7",
+        "text": "Your communication style is:",
+        "answers": [
+          { "text": "Direct and unfiltered", "result": "A" },
+          { "text": "Polished and persuasive", "result": "B" },
+          { "text": "Minimal and strategic", "result": "D" },
+          { "text": "Defensive and ideological", "result": "C" }
+        ]
+      },
+      {
+        "id": "q8",
+        "text": "In negotiations, you focus on:",
+        "answers": [
+          { "text": "Winning the deal", "result": "A" },
+          { "text": "Finding common ground", "result": "B" },
+          { "text": "Outlasting the other side", "result": "C" },
+          { "text": "Maximizing leverage", "result": "D" }
+        ]
+      },
+      {
+        "id": "q9",
+        "text": "How do you view rules?",
+        "answers": [
+          { "text": "They are flexible", "result": "A" },
+          { "text": "They exist to protect people", "result": "B" },
+          { "text": "They defend the system", "result": "C" },
+          { "text": "They are tools to be used", "result": "D" }
+        ]
+      },
+      {
+        "id": "q10",
+        "text": "Under intense pressure, you become:",
+        "answers": [
+          { "text": "More aggressive", "result": "A" },
+          { "text": "More composed", "result": "B" },
+          { "text": "More calculating", "result": "D" },
+          { "text": "More stubborn", "result": "C" }
+        ]
+      },
+      {
+        "id": "q11",
+        "text": "People often see you as:",
+        "answers": [
+          { "text": "Charismatic", "result": "B" },
+          { "text": "Intimidating", "result": "D" },
+          { "text": "Fearless", "result": "A" },
+          { "text": "Unshakeable", "result": "C" }
+        ]
+      },
+      {
+        "id": "q12",
+        "text": "When facing opposition, you:",
+        "answers": [
+          { "text": "Attack their credibility", "result": "A" },
+          { "text": "Try to unite both sides", "result": "B" },
+          { "text": "Wait them out", "result": "C" },
+          { "text": "Neutralize them quietly", "result": "D" }
+        ]
+      },
+      {
+        "id": "q13",
+        "text": "Your biggest strength is:",
+        "answers": [
+          { "text": "Confidence", "result": "A" },
+          { "text": "Communication", "result": "B" },
+          { "text": "Endurance", "result": "C" },
+          { "text": "Strategic thinking", "result": "D" }
+        ]
+      },
+      {
+        "id": "q14",
+        "text": "In a crisis, your instinct is to:",
+        "answers": [
+          { "text": "Take control publicly", "result": "A" },
+          { "text": "Reassure and explain", "result": "B" },
+          { "text": "Secure control behind the scenes", "result": "D" },
+          { "text": "Hold the line", "result": "C" }
+        ]
+      },
+      {
+        "id": "q15",
+        "text": "Your ideal outcome is:",
+        "answers": [
+          { "text": "Total victory", "result": "A" },
+          { "text": "Lasting impact", "result": "B" },
+          { "text": "Staying in power", "result": "C" },
+          { "text": "Maintaining dominance", "result": "D" }
+        ]
+      },
+      {
+        "id": "q16",
+        "text": "How do you treat allies?",
+        "answers": [
+          { "text": "Reward loyalty", "result": "A" },
+          { "text": "Build coalitions", "result": "B" },
+          { "text": "Depend on the few you trust", "result": "D" },
+          { "text": "Rely on ideological alignment", "result": "C" }
+        ]
+      },
+      {
+        "id": "q17",
+        "text": "When someone challenges your authority:",
+        "answers": [
+          { "text": "You confront them openly", "result": "A" },
+          { "text": "You debate them", "result": "B" },
+          { "text": "You remove their influence", "result": "D" },
+          { "text": "You endure and resist", "result": "C" }
+        ]
+      },
+      {
+        "id": "q18",
+        "text": "What drives you forward?",
+        "answers": [
+          { "text": "Recognition", "result": "A" },
+          { "text": "Purpose", "result": "B" },
+          { "text": "Survival", "result": "C" },
+          { "text": "Control", "result": "D" }
+        ]
+      },
+      {
+        "id": "q19",
+        "text": "Your biggest weakness is:",
+        "answers": [
+          { "text": "Being too blunt", "result": "A" },
+          { "text": "Overthinking", "result": "B" },
+          { "text": "Isolation", "result": "D" },
+          { "text": "Rigidity", "result": "C" }
+        ]
+      },
+      {
+        "id": "q20",
+        "text": "Deep down, you believe leaders should:",
+        "answers": [
+          { "text": "Dominate", "result": "A" },
+          { "text": "Inspire", "result": "B" },
+          { "text": "Endure", "result": "C" },
+          { "text": "Control", "result": "D" }
+        ]
+      }
+    ]
+  }
+  

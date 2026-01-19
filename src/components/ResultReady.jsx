@@ -1,7 +1,9 @@
 export default function ResultReady({ 
   onContinue,
-  primaryColor = '#000000',
-  backgroundColor = '#FFFFFF'
+  accentColor = '#000000',
+  backgroundColor = '#FFFFFF',
+  progressColor = '#3B82F6',
+  selectedButtonColor = '#000000'
 }) {
   return (
     <div 
@@ -13,7 +15,7 @@ export default function ResultReady({
           <div 
             className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
             style={{ 
-              backgroundColor: primaryColor,
+              backgroundColor: progressColor,
               color: backgroundColor
             }}
           >
@@ -33,7 +35,7 @@ export default function ResultReady({
           </div>
           <h1 
             className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ color: primaryColor }}
+            style={{ color: accentColor }}
           >
             Your Result is Ready!
           </h1>
@@ -46,7 +48,7 @@ export default function ResultReady({
           onClick={onContinue}
           className="px-8 py-4 text-lg font-semibold rounded-lg transition-all focus:outline-none hover:opacity-90 hover:shadow-lg transform hover:scale-105"
           style={{
-            backgroundColor: primaryColor,
+            backgroundColor: selectedButtonColor,
             color: backgroundColor,
           }}
           aria-label="View your result"

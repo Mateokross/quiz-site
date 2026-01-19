@@ -8,9 +8,11 @@ import ResultReady from './ResultReady'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
+import presidentsQuizConfig from '../quiz-configs/presidents.json'
 
 const QUIZ_CONFIGS = {
   'personality-quiz': personalityQuizConfig,
+  'presidents': presidentsQuizConfig,
 }
 
 export default function Quiz() {
@@ -88,9 +90,12 @@ export default function Quiz() {
     )
   }
 
-  const primaryColor = quizConfig.theme?.primaryColor || '#000000'
+  const accentColor = quizConfig.theme?.accentColor || '#000000'
   const backgroundColor = quizConfig.theme?.backgroundColor || '#FFFFFF'
   const progressColor = quizConfig.theme?.progressColor || '#3B82F6' // Default blue
+  const navbarBackgroundColor = quizConfig.theme?.navbarBackgroundColor || '#FFFFFF'
+  const navbarTitleColor = quizConfig.theme?.navbarTitleColor || accentColor
+  const selectedButtonColor = quizConfig.theme?.selectedButtonColor || accentColor
 
   // Calculate progress percentage
   const answeredCount = Object.keys(answers).length
@@ -104,7 +109,7 @@ export default function Quiz() {
         resultCategory={result}
         quizConfig={quizConfig}
         onRestart={resetQuiz}
-        primaryColor={primaryColor}
+        accentColor={accentColor}
         backgroundColor={backgroundColor}
       />
     )
@@ -115,8 +120,10 @@ export default function Quiz() {
     return (
       <ResultReady
         onContinue={revealResult}
-        primaryColor={primaryColor}
+        accentColor={accentColor}
         backgroundColor={backgroundColor}
+        progressColor={progressColor}
+        selectedButtonColor={selectedButtonColor}
       />
     )
   }
@@ -125,8 +132,9 @@ export default function Quiz() {
   if (isComplete && resultRevealState === 'loading') {
     return (
       <LoadingSpinner 
-        primaryColor={primaryColor}
+        accentColor={accentColor}
         backgroundColor={backgroundColor}
+        progressColor={progressColor}
       />
     )
   }
@@ -146,9 +154,16 @@ export default function Quiz() {
 
   return (
     <div style={{ backgroundColor }}>
-      <div className="sticky top-0 z-10 bg-white bg-opacity-90 backdrop-blur-sm border-b border-gray-200">
+      <div 
+        className="sticky top-0 z-10 backdrop-blur-sm border-b border-gray-200"
+        style={{ 
+          backgroundColor: navbarBackgroundColor === '#FFFFFF' 
+            ? 'rgba(255, 255, 255, 0.9)' 
+            : navbarBackgroundColor 
+        }}
+      >
         <div className="p-4">
-          <h1 className="text-lg font-semibold text-center" style={{ color: primaryColor }}>
+          <h1 className="text-lg font-semibold text-center" style={{ color: navbarTitleColor }}>
             {quizConfig.title}
           </h1>
         </div>
@@ -180,8 +195,9 @@ export default function Quiz() {
             question={question}
             selectedAnswerIndex={selectedAnswerIndex}
             onSelectAnswer={selectAnswer}
-            primaryColor={primaryColor}
+            accentColor={accentColor}
             backgroundColor={backgroundColor}
+            selectedButtonColor={selectedButtonColor}
           />
         )
       })}

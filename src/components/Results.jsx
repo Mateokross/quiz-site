@@ -5,7 +5,7 @@ export default function Results({
   resultCategory, 
   quizConfig, 
   onRestart,
-  primaryColor = '#000000',
+  accentColor = '#000000',
   backgroundColor = '#FFFFFF'
 }) {
   const [shareResultTooltip, setShareResultTooltip] = useState('Share result')
@@ -25,7 +25,7 @@ export default function Results({
     if (!button) return
 
     const maintainBorder = () => {
-      button.style.border = `1.5px solid ${primaryColor}`
+      button.style.border = `1.5px solid ${accentColor}`
     }
 
     button.addEventListener('focus', maintainBorder)
@@ -41,14 +41,14 @@ export default function Results({
       button.removeEventListener('mouseup', maintainBorder)
       button.removeEventListener('click', maintainBorder)
     }
-  }, [primaryColor])
+  }, [accentColor])
 
   useEffect(() => {
     const button = copyUrlButtonRef.current
     if (!button) return
 
     const maintainBorder = () => {
-      button.style.border = `1.5px solid ${primaryColor}`
+      button.style.border = `1.5px solid ${accentColor}`
     }
 
     button.addEventListener('focus', maintainBorder)
@@ -64,7 +64,7 @@ export default function Results({
       button.removeEventListener('mouseup', maintainBorder)
       button.removeEventListener('click', maintainBorder)
     }
-  }, [primaryColor])
+  }, [accentColor])
 
   const handleShareResult = async () => {
     const success = await shareResult(result?.title || '', quizTitle, quizId, resultCategory)
@@ -102,7 +102,7 @@ export default function Results({
       result?.title || 'Unknown',
       backgroundColor,
       quizId,
-      primaryColor
+      accentColor
     )
     if (success) {
       setDownloadImageTooltip('Downloaded!')
@@ -134,20 +134,20 @@ export default function Results({
         >
           <h1 
             className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ color: primaryColor }}
+            style={{ color: accentColor }}
           >
             Your Result: {result?.title || 'Unknown'}
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+          <div className="text-lg md:text-xl text-gray-700 leading-relaxed whitespace-pre-line">
             {result?.description || 'No description available.'}
-          </p>
+          </div>
         </div>
 
         <button
           onClick={onRestart}
           className="flex items-center gap-2 text-base font-medium transition-opacity hover:opacity-70 focus:outline-none mx-auto mb-8"
           style={{
-            color: primaryColor,
+            color: accentColor,
             backgroundColor: 'transparent',
             border: 'none',
             padding: 0,
@@ -168,7 +168,7 @@ export default function Results({
           <div className="flex flex-col gap-3 justify-center items-center">
             <h2 
               className="text-xl md:text-2xl font-semibold"
-              style={{ color: primaryColor }}
+              style={{ color: accentColor }}
             >
               Share Your Result!
             </h2>
@@ -183,7 +183,7 @@ export default function Results({
                     min-h-[48px] min-w-[48px]
                   `}
                   style={{
-                    backgroundColor: primaryColor,
+                    backgroundColor: accentColor,
                     color: backgroundColor,
                   }}
                   aria-label="Share result"
@@ -291,22 +291,22 @@ export default function Results({
                     outline: 'none',
                     minHeight: '48px',
                     minWidth: '48px',
-                    borderColor: primaryColor,
+                    borderColor: accentColor,
                     borderWidth: '1.5px',
                     borderStyle: 'solid',
-                    color: primaryColor,
+                    color: accentColor,
                     backgroundColor: backgroundColor,
                     cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.opacity = '0.9';
                     e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                    e.currentTarget.style.border = `1.5px solid ${accentColor}`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.opacity = '1';
                     e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                    e.currentTarget.style.border = `1.5px solid ${accentColor}`;
                   }}
                   aria-label="Copy text"
                 >
@@ -336,22 +336,22 @@ export default function Results({
                     outline: 'none',
                     minHeight: '48px',
                     minWidth: '48px',
-                    borderColor: primaryColor,
+                    borderColor: accentColor,
                     borderWidth: '1.5px',
                     borderStyle: 'solid',
-                    color: primaryColor,
+                    color: accentColor,
                     backgroundColor: backgroundColor,
                     cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.opacity = '0.9';
                     e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                    e.currentTarget.style.border = `1.5px solid ${accentColor}`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.opacity = '1';
                     e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                    e.currentTarget.style.border = `1.5px solid ${accentColor}`;
                   }}
                   aria-label="Download image"
                 >
@@ -383,22 +383,22 @@ export default function Results({
                     outline: 'none',
                     minHeight: '48px',
                     minWidth: '48px',
-                    borderColor: primaryColor,
+                    borderColor: accentColor,
                     borderWidth: '1.5px',
                     borderStyle: 'solid',
-                    color: primaryColor,
+                    color: accentColor,
                     backgroundColor: backgroundColor,
                     cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.opacity = '0.9';
                     e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                    e.currentTarget.style.border = `1.5px solid ${accentColor}`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.opacity = '1';
                     e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.border = `1.5px solid ${primaryColor}`;
+                    e.currentTarget.style.border = `1.5px solid ${accentColor}`;
                   }}
                   aria-label="Copy URL"
                 >

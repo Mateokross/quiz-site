@@ -4,9 +4,11 @@ import LoadingSpinner from './LoadingSpinner'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
+import presidentsQuizConfig from '../quiz-configs/presidents.json'
 
 const QUIZ_CONFIGS = {
   'personality-quiz': personalityQuizConfig,
+  'presidents': presidentsQuizConfig,
 }
 
 export default function SharedResult() {
@@ -94,7 +96,7 @@ export default function SharedResult() {
   }
 
   const result = quizConfig.results[resultCategory]
-  const primaryColor = quizConfig.theme?.primaryColor || '#000000'
+  const accentColor = quizConfig.theme?.accentColor || '#000000'
   const backgroundColor = quizConfig.theme?.backgroundColor || '#FFFFFF'
 
   return (
@@ -109,19 +111,19 @@ export default function SharedResult() {
         >
           <h1 
             className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ color: primaryColor }}
+            style={{ color: accentColor }}
           >
             {result?.title || 'Unknown'}
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+          <div className="text-lg md:text-xl text-gray-700 leading-relaxed whitespace-pre-line">
             {result?.description || 'No description available.'}
-          </p>
+          </div>
         </div>
 
         <div className="mt-8">
           <h2 
             className="text-lg md:text-xl font-semibold mb-4"
-            style={{ color: primaryColor }}
+            style={{ color: accentColor }}
           >
             Want to find out your result?
           </h2>
@@ -129,7 +131,7 @@ export default function SharedResult() {
             onClick={handleTakeQuiz}
             className="px-8 py-3 rounded-lg font-semibold text-lg transition-opacity hover:opacity-90 focus:outline-none"
             style={{
-              backgroundColor: primaryColor,
+              backgroundColor: accentColor,
               color: backgroundColor,
             }}
             aria-label="Take the quiz yourself"

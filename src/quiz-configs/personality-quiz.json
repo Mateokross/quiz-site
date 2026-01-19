@@ -2,9 +2,12 @@
   "id": "personality-quiz",
   "title": "What's Your Personality Type?",
   "theme": {
-    "primaryColor": "#000000",
+    "accentColor": "#000000",
     "backgroundColor": "#FFFFFF",
-    "progressColor": "#6366F1"
+    "progressColor": "#6366F1",
+    "navbarBackgroundColor": "#FFFFFF",
+    "navbarTitleColor": "#000000",
+    "selectedButtonColor": "#000000"
   },
   "results": {
     "A": {
