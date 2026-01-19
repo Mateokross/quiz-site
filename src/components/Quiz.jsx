@@ -44,6 +44,18 @@ export default function Quiz() {
   }, [quizId])
 
   useEffect(() => {
+    // Update document title with quiz name
+    if (quizConfig?.title) {
+      document.title = quizConfig.title
+    }
+    
+    // Cleanup: reset to default title when component unmounts
+    return () => {
+      document.title = 'Quiz Site'
+    }
+  }, [quizConfig])
+
+  useEffect(() => {
     // Scroll to current question on mount or question change
     if (quizConfig?.questions && quizConfig.questions[currentQuestionIndex]) {
       const timer = setTimeout(() => {
