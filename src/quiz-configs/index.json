@@ -1,0 +1,12 @@
+[
+  {
+    "id": "personality-quiz",
+    "title": "What's Your Personality Type?",
+    "path": "/quiz/personality-quiz"
+  },
+  {
+    "id": "presidents",
+    "title": "Which President Are You?",
+    "path": "/quiz/presidents"
+  }
+]
