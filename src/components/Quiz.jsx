@@ -53,7 +53,7 @@ export default function Quiz() {
     
     // Cleanup: reset to default title when component unmounts
     return () => {
-      document.title = 'Quiz Site'
+      document.title = 'quizzs'
     }
   }, [quizConfig])
 
