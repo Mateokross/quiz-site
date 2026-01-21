@@ -180,7 +180,7 @@ export default function Quiz() {
   return (
     <div style={{ backgroundColor }}>
       {/* Interstitial ad */}
-      <AdInterstitial isLoadingScreen={resultRevealState === 'loading'} />
+      <AdInterstitial />
       
       {/* Sidebars - Desktop only */}
       <AdSidebar position="left" navbarTopOffset={navbarTotalHeight} />

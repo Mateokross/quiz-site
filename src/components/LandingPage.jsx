@@ -8,7 +8,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Interstitial ad */}
-      <AdInterstitial isLoadingScreen={false} />
+      <AdInterstitial />
       {/* Header */}
       <header className="w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12 lg:py-16">

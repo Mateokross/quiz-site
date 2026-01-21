@@ -233,7 +233,7 @@ Each wrapper component provides specific styling and behavior:
   - Dismissible with close button
   - Appears 30 seconds after page load
   - Refreshes every 2 minutes after being closed (timer continues from close time)
-  - Pauses timer when loading screen is visible
+  - Pauses timer when tab is hidden
   - Only renders when tab is visible (uses Page Visibility API)
   - Hides container on no fill
 
@@ -537,10 +537,8 @@ The interstitial ad follows a specific timing pattern:
 
 1. **Initial Display**: Appears 30 seconds after page load (only if tab is visible)
 2. **After Close**: Timer starts 2-minute countdown from close time (NOT reset to page load)
-3. **Pause Conditions**: Timer pauses when:
-   - Tab becomes hidden (Page Visibility API)
-   - Loading screen is visible (`isLoadingScreen={true}`)
-4. **Resume**: Timer resumes from where it paused when conditions are met
+3. **Pause Conditions**: Timer pauses when tab becomes hidden (Page Visibility API)
+4. **Resume**: Timer resumes from where it paused when tab becomes visible
 5. **Display**: Ad only displays when tab is visible AND timer has elapsed
 
 ### Timer Continuation Logic
@@ -560,22 +558,11 @@ Uses the Page Visibility API to ensure ads only render when visible:
 - Resumes timer when tab becomes visible
 - Hides ad immediately if tab becomes hidden while ad is showing
 
-### Loading Screen Integration
-
-The interstitial ad respects loading screen state:
-- Accepts `isLoadingScreen` prop from parent components
-- Pauses timer when loading screen is visible
-- Hides ad if currently showing when loading screen appears
-- Resumes timer when loading screen disappears (if tab is visible)
-
 ### Component Usage
 
 ```javascript
-// In Quiz component (pauses during loading)
-<AdInterstitial isLoadingScreen={resultRevealState === 'loading'} />
-
-// In other components (no loading screen)
-<AdInterstitial isLoadingScreen={false} />
+// Simple usage - no props needed
+<AdInterstitial />
 ```
 
 ## Future Improvements

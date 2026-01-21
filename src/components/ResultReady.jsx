@@ -27,7 +27,7 @@ export default function ResultReady({
       style={{ backgroundColor }}
     >
       {/* Interstitial ad */}
-      <AdInterstitial isLoadingScreen={false} />
+      <AdInterstitial />
       
       {/* Sidebars */}
       <AdSidebar position="left" />

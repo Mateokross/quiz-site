@@ -7,13 +7,12 @@ import { AD_CONFIG } from '../constants/adConfig'
  * Features:
  * - Shows ad 30 seconds after page load
  * - After closing, shows again 2 minutes from close time (not reset)
- * - Pauses timer when tab is hidden or loading screen is visible
+ * - Pauses timer when tab is hidden
  * - Only shows ad when tab is visible
  * 
- * @param {boolean} isLoadingScreen - Whether LoadingSpinner is currently visible
  * @returns {Object} - { shouldShow, onClose }
  */
-export function useInterstitialAd(isLoadingScreen = false) {
+export function useInterstitialAd() {
   const [shouldShow, setShouldShow] = useState(false)
   const pageLoadTimeRef = useRef(Date.now())
   const lastCloseTimeRef = useRef(null)
@@ -21,12 +20,6 @@ export function useInterstitialAd(isLoadingScreen = false) {
   const pausedTimeRef = useRef(null) // Timestamp when timer was paused
   const remainingTimeRef = useRef(null) // Remaining time when paused
   const isTabVisibleRef = useRef(!document.hidden)
-  const isLoadingScreenRef = useRef(isLoadingScreen)
-
-  // Update ref when isLoadingScreen changes
-  useEffect(() => {
-    isLoadingScreenRef.current = isLoadingScreen
-  }, [isLoadingScreen])
 
   // Calculate initial delay or refresh interval
   const getDelay = useCallback(() => {
@@ -60,8 +53,8 @@ export function useInterstitialAd(isLoadingScreen = false) {
   const startTimer = useCallback(() => {
     clearTimer()
 
-    // Don't start timer if tab is hidden or loading screen is visible
-    if (!isTabVisibleRef.current || isLoadingScreenRef.current) {
+    // Don't start timer if tab is hidden
+    if (!isTabVisibleRef.current) {
       return
     }
 
@@ -69,7 +62,7 @@ export function useInterstitialAd(isLoadingScreen = false) {
     if (pausedTimeRef.current !== null && remainingTimeRef.current !== null) {
       const remaining = remainingTimeRef.current
       timerRef.current = setTimeout(() => {
-        if (isTabVisibleRef.current && !isLoadingScreenRef.current) {
+        if (isTabVisibleRef.current) {
           setShouldShow(true)
         }
         pausedTimeRef.current = null
@@ -86,13 +79,13 @@ export function useInterstitialAd(isLoadingScreen = false) {
 
     if (remaining > 0) {
       timerRef.current = setTimeout(() => {
-        if (isTabVisibleRef.current && !isLoadingScreenRef.current) {
+        if (isTabVisibleRef.current) {
           setShouldShow(true)
         }
       }, remaining)
     } else {
       // Time has already elapsed
-      if (isTabVisibleRef.current && !isLoadingScreenRef.current) {
+      if (isTabVisibleRef.current) {
         setShouldShow(true)
       }
     }
@@ -115,9 +108,7 @@ export function useInterstitialAd(isLoadingScreen = false) {
 
   // Resume timer
   const resumeTimer = useCallback(() => {
-    // If we have paused state, we'll use the stored remaining time
-    // The pause duration doesn't matter - we just wait for remaining time
-    pausedTimeRef.current = null
+    // startTimer will check for paused state and use remaining time if available
     startTimer()
   }, [startTimer])
 
@@ -128,8 +119,8 @@ export function useInterstitialAd(isLoadingScreen = false) {
       isTabVisibleRef.current = isVisible
 
       if (isVisible) {
-        // Tab became visible - resume timer if not loading and ad not showing
-        if (!isLoadingScreenRef.current && !shouldShow) {
+        // Tab became visible - resume timer if ad not showing
+        if (!shouldShow) {
           resumeTimer()
         }
       } else {
@@ -147,23 +138,6 @@ export function useInterstitialAd(isLoadingScreen = false) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [shouldShow, pauseTimer, resumeTimer])
-
-  // Handle loading screen changes
-  useEffect(() => {
-    if (isLoadingScreen) {
-      // Loading screen appeared - pause timer
-      pauseTimer()
-      // Hide ad if currently showing
-      if (shouldShow) {
-        setShouldShow(false)
-      }
-    } else {
-      // Loading screen disappeared - resume timer if tab is visible
-      if (isTabVisibleRef.current && !shouldShow) {
-        resumeTimer()
-      }
-    }
-  }, [isLoadingScreen, shouldShow, pauseTimer, resumeTimer])
 
   // Initialize timer on mount
   useEffect(() => {
@@ -183,7 +157,7 @@ export function useInterstitialAd(isLoadingScreen = false) {
     clearTimer()
     
     // Start 2-minute timer from close time
-    if (isTabVisibleRef.current && !isLoadingScreenRef.current) {
+    if (isTabVisibleRef.current) {
       startTimer()
     }
   }, [clearTimer, startTimer])

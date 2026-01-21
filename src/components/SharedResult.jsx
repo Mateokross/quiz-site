@@ -118,7 +118,7 @@ export default function SharedResult() {
       style={{ backgroundColor }}
     >
       {/* Interstitial ad */}
-      <AdInterstitial isLoadingScreen={false} />
+      <AdInterstitial />
       
       {/* Sidebars */}
       <AdSidebar position="left" />

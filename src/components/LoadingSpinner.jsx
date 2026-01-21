@@ -24,8 +24,8 @@ export default function LoadingSpinner({
       className="min-h-screen flex flex-col items-center justify-center p-4 relative"
       style={{ backgroundColor }}
     >
-      {/* Interstitial ad (timer paused when loading screen is visible) */}
-      <AdInterstitial isLoadingScreen={true} />
+      {/* Interstitial ad */}
+      <AdInterstitial />
       
       {/* Sidebars */}
       <AdSidebar position="left" />

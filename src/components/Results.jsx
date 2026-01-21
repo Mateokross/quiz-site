@@ -140,7 +140,7 @@ export default function Results({
       style={{ backgroundColor }}
     >
       {/* Interstitial ad */}
-      <AdInterstitial isLoadingScreen={false} />
+      <AdInterstitial />
       
       {/* Sidebars */}
       <AdSidebar position="left" />

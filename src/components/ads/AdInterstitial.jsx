@@ -6,10 +6,10 @@ import { AD_SIZES } from '../../constants/adConfig'
 /**
  * Interstitial ad component (fullscreen overlay)
  * Appears 30 seconds after page load, then every 2 minutes after being closed
- * Pauses when loading screen is visible or tab is hidden
+ * Pauses when tab is hidden
  */
-export default function AdInterstitial({ isLoadingScreen = false }) {
-  const { shouldShow, onClose } = useInterstitialAd(isLoadingScreen)
+export default function AdInterstitial() {
+  const { shouldShow, onClose } = useInterstitialAd()
   const [hasRendered, setHasRendered] = useState(false)
 
   // Only render ad slot when we're about to show it (lazy initialization)
