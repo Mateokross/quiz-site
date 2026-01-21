@@ -29,9 +29,13 @@ export default function AdSidebar({ position = 'left', navbarTopOffset = 0 }) {
   // (minimum width vs sufficient space), so we check both for clarity
   const shouldLoad = isVisible && hasSpace
 
+  // Align ads to the edge of their container to prevent shifting when narrower ads load
+  const alignmentClass = position === 'left' ? 'justify-start' : 'justify-end'
+  const adAlignmentClass = position === 'left' ? 'flex justify-start' : 'flex justify-end'
+
   return (
     <div 
-      className={`hidden xl:block fixed ${position === 'left' ? 'left-0' : 'right-0'} bottom-0 z-10 flex items-center justify-center`}
+      className={`hidden xl:block fixed ${position === 'left' ? 'left-0' : 'right-0'} bottom-0 z-10 flex items-center ${alignmentClass}`}
       style={{ 
         top: topPosition,
         width: `${containerWidth}px`,
@@ -50,7 +54,7 @@ export default function AdSidebar({ position = 'left', navbarTopOffset = 0 }) {
             setRenderedSize(event.size)
           }
         }}
-        className="flex justify-center"
+        className={adAlignmentClass}
       />
     </div>
   )
