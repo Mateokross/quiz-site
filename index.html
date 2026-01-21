@@ -23,6 +23,34 @@
 
       gtag('config', 'G-KW5NKL5MBC');
     </script>
+    <!-- Google Publisher Tag (GPT) -->
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+    <script>
+      window.googletag = window.googletag || {cmd: []};
+      googletag.cmd.push(function() {
+        // Top banner - desktop: 728x90, mobile: 320x100/320x50
+        googletag
+          .defineSlot('/6355419/Travel/Europe/France/Paris', [[728, 90], [320, 100], [320, 50]], 'ad-top-banner')
+          .addService(googletag.pubads());
+        
+        // Bottom banner - desktop: 728x90, mobile: 320x50
+        googletag
+          .defineSlot('/6355419/Travel/Europe/France/Paris', [[728, 90], [320, 50]], 'ad-bottom-banner')
+          .addService(googletag.pubads());
+        
+        // Left sidebar - desktop: 300x250, 160x600
+        googletag
+          .defineSlot('/6355419/Travel/Europe/France/Paris', [[300, 250], [160, 600]], 'ad-sidebar-left')
+          .addService(googletag.pubads());
+        
+        // Right sidebar - desktop: 300x250, 160x600
+        googletag
+          .defineSlot('/6355419/Travel/Europe/France/Paris', [[300, 250], [160, 600]], 'ad-sidebar-right')
+          .addService(googletag.pubads());
+        
+        googletag.enableServices();
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

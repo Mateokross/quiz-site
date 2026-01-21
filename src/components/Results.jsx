@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, shareOnWhatsApp, downloadResultImage, shareResult } from '../utils/shareResult'
+import AdTopBanner from './ads/AdTopBanner'
+import AdSidebar from './ads/AdSidebar'
+import { useAdManager } from '../hooks/useAdManager'
 
 export default function Results({ 
   resultCategory, 
@@ -15,10 +18,19 @@ export default function Results({
   const copyButtonRef = useRef(null)
   const copyUrlButtonRef = useRef(null)
   const resultsRef = useRef(null)
+  const { refreshAllSlots } = useAdManager()
 
   const result = quizConfig?.results?.[resultCategory]
   const quizTitle = quizConfig?.title || 'Quiz'
   const quizId = quizConfig?.id || ''
+
+  // Refresh ads when component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      refreshAllSlots()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [refreshAllSlots])
 
   useEffect(() => {
     const button = copyButtonRef.current
@@ -123,10 +135,19 @@ export default function Results({
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
+      className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative 2xl:px-[300px]"
       style={{ backgroundColor }}
     >
-      <div className="max-w-2xl mx-auto w-full text-center">
+      {/* Sidebars */}
+      <AdSidebar position="left" />
+      <AdSidebar position="right" />
+
+      {/* Top banner */}
+      <div className="w-full fixed top-0 z-20">
+        <AdTopBanner showBorder={false} />
+      </div>
+
+      <div className="mx-auto w-full text-center mt-[90px] md:min-w-[480px] lg:min-w-[600px] xl:min-w-[680px] 2xl:min-w-[800px] md:max-w-3xl lg:max-w-3xl xl:max-w-none xl:px-[300px]">
         <div 
           ref={resultsRef}
           className="mb-8 animate-fade-in"

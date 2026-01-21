@@ -1,14 +1,38 @@
+import { useEffect } from 'react'
+import AdTopBanner from './ads/AdTopBanner'
+import AdSidebar from './ads/AdSidebar'
+import { useAdManager } from '../hooks/useAdManager'
+
 export default function LoadingSpinner({ 
   accentColor = '#000000',
   backgroundColor = '#FFFFFF',
   progressColor = '#3B82F6'
 }) {
+  const { refreshAllSlots } = useAdManager()
+
+  // Refresh ads when component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      refreshAllSlots()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [refreshAllSlots])
+
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4"
+      className="min-h-screen flex flex-col items-center justify-center p-4 relative 2xl:px-[300px]"
       style={{ backgroundColor }}
     >
-      <div className="max-w-md mx-auto text-center animate-fade-in">
+      {/* Sidebars */}
+      <AdSidebar position="left" />
+      <AdSidebar position="right" />
+
+      {/* Top banner */}
+      <div className="w-full fixed top-0 z-20">
+        <AdTopBanner showBorder={false} />
+      </div>
+
+      <div className="mx-auto text-center animate-fade-in mt-[90px] md:min-w-[480px] lg:min-w-[600px] xl:min-w-[680px] 2xl:min-w-[800px] md:max-w-2xl lg:max-w-2xl xl:max-w-none xl:px-[300px]">
         <div className="mb-8">
           <div 
             className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center animate-spin"

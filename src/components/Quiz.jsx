@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuiz } from '../hooks/useQuiz'
 import Question from './Question'
 import Results from './Results'
 import LoadingSpinner from './LoadingSpinner'
 import ResultReady from './ResultReady'
+import AdTopBanner from './ads/AdTopBanner'
+import AdBottomBanner from './ads/AdBottomBanner'
+import AdSidebar from './ads/AdSidebar'
+import AdInContent from './ads/AdInContent'
+import { useAdManager } from '../hooks/useAdManager'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -20,6 +25,9 @@ export default function Quiz() {
   const [quizConfig, setQuizConfig] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [adHeight, setAdHeight] = useState(90) // Default to 90px
+  const { refreshAllSlots } = useAdManager()
+  const prevIsCompleteRef = useRef(false)
 
   const {
     currentQuestionIndex,
@@ -32,6 +40,18 @@ export default function Quiz() {
     revealResult,
     resetQuiz,
   } = useQuiz(quizConfig)
+
+  // Refresh ads when quiz is reset (when isComplete goes from true to false)
+  useEffect(() => {
+    if (prevIsCompleteRef.current && !isComplete && currentQuestionIndex === 0) {
+      // Quiz was reset - refresh all ads
+      const timer = setTimeout(() => {
+        refreshAllSlots()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+    prevIsCompleteRef.current = isComplete
+  }, [isComplete, currentQuestionIndex, refreshAllSlots])
 
   useEffect(() => {
     // Load quiz config
@@ -152,16 +172,34 @@ export default function Quiz() {
     )
   }
 
+  // Calculate navbar total height: ad height + navbar content (~73px)
+  const navbarTotalHeight = adHeight + 73
+
   return (
     <div style={{ backgroundColor }}>
+      {/* Sidebars - Desktop only */}
+      <AdSidebar position="left" navbarTopOffset={navbarTotalHeight} />
+      <AdSidebar position="right" navbarTopOffset={navbarTotalHeight} />
+
+      {/* Navbar with integrated ad */}
       <div 
-        className="sticky top-0 z-10 backdrop-blur-sm border-b border-gray-200"
+        className="sticky top-0 z-20 backdrop-blur-sm"
         style={{ 
           backgroundColor: navbarBackgroundColor === '#FFFFFF' 
             ? 'rgba(255, 255, 255, 0.9)' 
             : navbarBackgroundColor 
         }}
       >
+        {/* Top banner inside navbar */}
+        <AdTopBanner 
+          showBorder={false} 
+          backgroundColor={navbarBackgroundColor === '#FFFFFF' 
+            ? 'rgba(255, 255, 255, 0.9)' 
+            : navbarBackgroundColor}
+          onHeightChange={setAdHeight}
+        />
+        
+        {/* Navbar content */}
         <div className="p-4">
           <h1 className="text-lg font-semibold text-center" style={{ color: navbarTitleColor }}>
             {quizConfig.title}
@@ -185,22 +223,32 @@ export default function Quiz() {
         </div>
       </div>
 
-      {quizConfig.questions.map((question, index) => {
-        const selectedAnswerIndex = answers[question.id]
-        const isCurrentQuestion = index === currentQuestionIndex
+      {/* Questions with in-content ads between them */}
+      <div className="w-full md:min-w-[480px] lg:min-w-[600px] xl:min-w-[680px] 2xl:min-w-[800px] xl:px-[300px]">
+        {quizConfig.questions.map((question, index) => {
+          const selectedAnswerIndex = answers[question.id]
+          const isCurrentQuestion = index === currentQuestionIndex
 
-        return (
-          <Question
-            key={question.id}
-            question={question}
-            selectedAnswerIndex={selectedAnswerIndex}
-            onSelectAnswer={selectAnswer}
-            accentColor={accentColor}
-            backgroundColor={backgroundColor}
-            selectedButtonColor={selectedButtonColor}
-          />
-        )
-      })}
+          return (
+            <div key={question.id}>
+              {/* In-content ad before each question (except first) */}
+              {index > 0 && <AdInContent index={index} />}
+              
+              <Question
+                question={question}
+                selectedAnswerIndex={selectedAnswerIndex}
+                onSelectAnswer={selectAnswer}
+                accentColor={accentColor}
+                backgroundColor={backgroundColor}
+                selectedButtonColor={selectedButtonColor}
+              />
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Bottom banner - fixed at bottom */}
+      <AdBottomBanner />
     </div>
   )
 }

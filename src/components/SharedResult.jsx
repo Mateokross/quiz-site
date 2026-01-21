@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner'
+import AdTopBanner from './ads/AdTopBanner'
+import AdSidebar from './ads/AdSidebar'
+import { useAdManager } from '../hooks/useAdManager'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -17,6 +20,7 @@ export default function SharedResult() {
   const [quizConfig, setQuizConfig] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const { refreshAllSlots } = useAdManager()
 
   useEffect(() => {
     // Load quiz config
@@ -76,6 +80,14 @@ export default function SharedResult() {
     navigate(`/quiz/${quizId}`)
   }
 
+  // Refresh ads when component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      refreshAllSlots()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [refreshAllSlots])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -101,10 +113,19 @@ export default function SharedResult() {
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
+      className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative 2xl:px-[300px]"
       style={{ backgroundColor }}
     >
-      <div className="max-w-2xl mx-auto w-full text-center">
+      {/* Sidebars */}
+      <AdSidebar position="left" />
+      <AdSidebar position="right" />
+
+      {/* Top banner */}
+      <div className="w-full fixed top-0 z-20">
+        <AdTopBanner showBorder={false} />
+      </div>
+
+      <div className="mx-auto w-full text-center mt-[90px] md:min-w-[480px] lg:min-w-[600px] xl:min-w-[680px] 2xl:min-w-[800px] md:max-w-3xl lg:max-w-3xl xl:max-w-none xl:px-[300px]">
         <div 
           className="mb-8 animate-fade-in"
           style={{ animation: 'fadeIn 0.6s ease-in' }}
