@@ -11,14 +11,25 @@ import { AD_SIZES } from '../../constants/adConfig'
 export default function AdInterstitial() {
   const { shouldShow, onClose } = useInterstitialAd()
   const [hasRendered, setHasRendered] = useState(false)
+  const [hasFill, setHasFill] = useState(false)
 
   // Only render ad slot when we're about to show it (lazy initialization)
   useEffect(() => {
     if (shouldShow && !hasRendered) {
       setHasRendered(true)
+      setHasFill(false) // Reset fill state when starting to show
     }
   }, [shouldShow, hasRendered])
 
+  // Reset state when shouldShow becomes false
+  useEffect(() => {
+    if (!shouldShow) {
+      setHasFill(false)
+      setHasRendered(false)
+    }
+  }, [shouldShow])
+
+  // Don't render anything if we shouldn't show
   if (!shouldShow) {
     return null
   }
@@ -29,6 +40,7 @@ export default function AdInterstitial() {
     <div 
       id="ad-interstitial-overlay"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      style={{ display: hasFill ? 'flex' : 'none' }}
       onClick={(e) => {
         // Close when clicking backdrop (optional - you may want to remove this)
         if (e.target === e.currentTarget) {
@@ -68,9 +80,13 @@ export default function AdInterstitial() {
             useMaxSize={false}
             className="flex justify-center"
             onSlotRender={(event) => {
-              // Hide if no fill
               if (event.isEmpty) {
+                // No fill - close immediately without showing overlay
+                setHasFill(false)
                 onClose()
+              } else {
+                // Has fill - show overlay
+                setHasFill(true)
               }
             }}
           />
