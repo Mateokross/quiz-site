@@ -135,7 +135,7 @@ export default function Results({
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative 2xl:px-[300px]"
+      className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative"
       style={{ backgroundColor }}
     >
       {/* Sidebars */}

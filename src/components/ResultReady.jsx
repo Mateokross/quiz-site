@@ -22,7 +22,7 @@ export default function ResultReady({
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 relative 2xl:px-[300px]"
+      className="min-h-screen flex flex-col items-center justify-center p-4 relative"
       style={{ backgroundColor }}
     >
       {/* Sidebars */}
