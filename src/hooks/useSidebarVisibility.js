@@ -1,58 +1,41 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
+import { AD_BREAKPOINTS, SIDEBAR_REQUIRED_WIDTH } from '../constants/adConfig'
 
 /**
  * Hook to detect if sidebar ads should be loaded based on viewport width
- * and actual visibility of the sidebar container
+ * and available space for sidebars
  */
-export function useSidebarVisibility(containerRef, minWidth = 1280) {
-  const [isVisible, setIsVisible] = useState(() => {
-    // Initialize based on current viewport width
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= minWidth
-    }
-    return false
-  })
-  const [hasSpace, setHasSpace] = useState(() => {
-    // Initialize based on current viewport width
-    if (typeof window !== 'undefined') {
-      const viewportWidth = window.innerWidth
-      const contentMinWidth = 680
-      const sidebarWidth = 300
-      const requiredWidth = contentMinWidth + (sidebarWidth * 2)
-      return viewportWidth >= requiredWidth
-    }
-    return false
-  })
+export function useSidebarVisibility(minWidth = AD_BREAKPOINTS.XL) {
+  const checkVisibility = () => {
+    const viewportWidth = window.innerWidth
+    const meetsMinWidth = viewportWidth >= minWidth
+    const sufficientSpace = viewportWidth >= SIDEBAR_REQUIRED_WIDTH
+    return { isVisible: meetsMinWidth, hasSpace: sufficientSpace }
+  }
+
+  const initialState = typeof window !== 'undefined' 
+    ? checkVisibility() 
+    : { isVisible: false, hasSpace: false }
+
+  const [isVisible, setIsVisible] = useState(initialState.isVisible)
+  const [hasSpace, setHasSpace] = useState(initialState.hasSpace)
 
   useEffect(() => {
-    const checkVisibility = () => {
-      const viewportWidth = window.innerWidth
-      const meetsMinWidth = viewportWidth >= minWidth
-      
-      // Check if there's sufficient space (viewport width - content min-width >= sidebar width)
-      // Content min-width at xl is 680px, sidebar is 300px
-      // So we need at least 680 + 300 + 300 = 1280px
-      const contentMinWidth = 680
-      const sidebarWidth = 300
-      const requiredWidth = contentMinWidth + (sidebarWidth * 2)
-      const sufficientSpace = viewportWidth >= requiredWidth
-
-      // If viewport meets min width, assume container will be visible (CSS handles display)
-      // We don't need to check computed styles since Tailwind's `hidden xl:block` handles visibility
-      setIsVisible(meetsMinWidth)
-      setHasSpace(sufficientSpace)
+    const updateVisibility = () => {
+      const { isVisible: visible, hasSpace: space } = checkVisibility()
+      setIsVisible(visible)
+      setHasSpace(space)
     }
 
-    // Initial check with small delay to ensure DOM is ready
-    const timer = setTimeout(checkVisibility, 0)
+    // Initial check (useEffect runs after render, so DOM is ready)
+    updateVisibility()
 
     // Listen to resize events
-    window.addEventListener('resize', checkVisibility)
+    window.addEventListener('resize', updateVisibility)
 
     // Cleanup
     return () => {
-      clearTimeout(timer)
-      window.removeEventListener('resize', checkVisibility)
+      window.removeEventListener('resize', updateVisibility)
     }
   }, [minWidth])
 

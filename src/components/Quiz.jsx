@@ -10,6 +10,7 @@ import AdBottomBanner from './ads/AdBottomBanner'
 import AdSidebar from './ads/AdSidebar'
 import AdInContent from './ads/AdInContent'
 import { useAdManager } from '../hooks/useAdManager'
+import { AD_CONFIG } from '../constants/adConfig'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -25,7 +26,7 @@ export default function Quiz() {
   const [quizConfig, setQuizConfig] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [adHeight, setAdHeight] = useState(90) // Default to 90px
+  const [adHeight, setAdHeight] = useState(90) // Default to 90px (typical banner height)
   const { refreshAllSlots } = useAdManager()
   const prevIsCompleteRef = useRef(false)
 
@@ -172,8 +173,8 @@ export default function Quiz() {
     )
   }
 
-  // Calculate navbar total height: ad height + navbar content (~73px)
-  const navbarTotalHeight = adHeight + 73
+  // Calculate navbar total height: ad height + navbar content
+  const navbarTotalHeight = adHeight + AD_CONFIG.NAVBAR_CONTENT_HEIGHT
 
   return (
     <div style={{ backgroundColor }}>
@@ -192,7 +193,6 @@ export default function Quiz() {
       >
         {/* Top banner inside navbar */}
         <AdTopBanner 
-          showBorder={false} 
           backgroundColor={navbarBackgroundColor === '#FFFFFF' 
             ? 'rgba(255, 255, 255, 0.9)' 
             : navbarBackgroundColor}
@@ -227,7 +227,6 @@ export default function Quiz() {
       <div className="w-full md:min-w-[480px] lg:min-w-[600px] xl:min-w-[680px] 2xl:min-w-[800px] xl:px-[300px]">
         {quizConfig.questions.map((question, index) => {
           const selectedAnswerIndex = answers[question.id]
-          const isCurrentQuestion = index === currentQuestionIndex
 
           return (
             <div key={question.id}>

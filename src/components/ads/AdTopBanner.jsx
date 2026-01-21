@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import AdSlot from './AdSlot'
 import { useAdManager } from '../../hooks/useAdManager'
+import { AD_SIZES } from '../../constants/adConfig'
 
 /**
  * Top banner ad component
@@ -8,18 +9,13 @@ import { useAdManager } from '../../hooks/useAdManager'
  * Hides container when no fill
  */
 export default function AdTopBanner({ 
-  showBorder = true, 
   backgroundColor = null,
   onHeightChange = null 
 }) {
   const { isMobile } = useAdManager()
   const [adHeight, setAdHeight] = useState(null)
 
-  // Desktop: 728x90 primary, 320x50 fallback
-  // Mobile: 320x100 primary, 320x50 fallback
-  const desktopSizes = [[728, 90], [320, 50]]
-  const mobileSizes = [[320, 100], [320, 50]]
-  const sizes = isMobile ? mobileSizes : desktopSizes
+  const sizes = isMobile ? AD_SIZES.TOP_BANNER.mobile : AD_SIZES.TOP_BANNER.desktop
 
   const handleSlotRender = (event) => {
     if (!event.isEmpty && event.size) {
@@ -31,13 +27,6 @@ export default function AdTopBanner({
       }
     }
   }
-
-  // Notify parent of height changes
-  useEffect(() => {
-    if (adHeight && onHeightChange) {
-      onHeightChange(adHeight)
-    }
-  }, [adHeight, onHeightChange])
 
   return (
     <div 

@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useAdManager } from '../../hooks/useAdManager'
+import { AD_CONFIG, AD_UNIT_PATH } from '../../constants/adConfig'
+import { calculateMaxDimensions } from '../../utils/adHelpers'
 
 /**
  * Base ad slot component with GPT integration
@@ -8,12 +10,12 @@ import { useAdManager } from '../../hooks/useAdManager'
 export default function AdSlot({
   slotId,
   sizes,
-  adUnitPath = '/6355419/Travel/Europe/France/Paris',
+  adUnitPath = AD_UNIT_PATH,
   className = '',
   style = {},
   hideOnNoFill = false,
   autoRefresh = true,
-  refreshInterval = 60000,
+  refreshInterval = AD_CONFIG.REFRESH_INTERVAL,
   onSlotRender = null,
   useMaxSize = true,
   shouldLoad = true,
@@ -21,12 +23,31 @@ export default function AdSlot({
   const containerRef = useRef(null)
   const [isVisible, setIsVisible] = useState(true)
   const { registerSlot, displaySlot, setupRefresh, cleanupRefresh } = useAdManager()
+  
+  // Memoize event handler to prevent memory leaks and unnecessary re-renders
+  const handleSlotRenderEnded = useCallback((event) => {
+    const eventSlotId = event.slot.getSlotElementId()
+    if (eventSlotId === slotId) {
+      if (event.isEmpty && hideOnNoFill) {
+        setIsVisible(false)
+      } else if (!event.isEmpty) {
+        setIsVisible(true)
+      }
+      if (typeof onSlotRender === 'function') {
+        onSlotRender(event)
+      }
+    }
+  }, [slotId, hideOnNoFill, onSlotRender])
 
   useEffect(() => {
     // Only register and display if shouldLoad is true
     if (!shouldLoad) {
       return
     }
+
+    // Reset visibility when component mounts to allow ad to render
+    // This ensures ads show up when navigating between pages
+    setIsVisible(true)
 
     // Register and display the slot
     if (window.googletag && containerRef.current) {
@@ -43,19 +64,6 @@ export default function AdSlot({
     }
 
     // Set up no-fill detection
-    const handleSlotRenderEnded = (event) => {
-      if (event.slot.getSlotElementId() === slotId) {
-        if (event.isEmpty && hideOnNoFill) {
-          setIsVisible(false)
-        } else if (!event.isEmpty) {
-          setIsVisible(true)
-        }
-        if (typeof onSlotRender === 'function') {
-          onSlotRender(event)
-        }
-      }
-    }
-
     if (window.googletag) {
       window.googletag.cmd.push(function() {
         window.googletag.pubads().addEventListener('slotRenderEnded', handleSlotRenderEnded)
@@ -73,15 +81,14 @@ export default function AdSlot({
         })
       }
     }
-  }, [slotId, sizes, adUnitPath, hideOnNoFill, autoRefresh, refreshInterval, onSlotRender, shouldLoad, registerSlot, displaySlot, setupRefresh, cleanupRefresh])
+  }, [slotId, sizes, adUnitPath, hideOnNoFill, autoRefresh, refreshInterval, shouldLoad, registerSlot, displaySlot, setupRefresh, cleanupRefresh, handleSlotRenderEnded])
 
   if (!isVisible) {
     return null
   }
 
   // Calculate container dimensions based on largest size
-  const maxWidth = Math.max(...sizes.map(size => size[0]))
-  const maxHeight = Math.max(...sizes.map(size => size[1]))
+  const { maxWidth, maxHeight } = calculateMaxDimensions(sizes)
   const sizeStyles = useMaxSize
     ? { minWidth: `${maxWidth}px`, minHeight: `${maxHeight}px` }
     : {}

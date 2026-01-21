@@ -1,4 +1,21 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { AD_BREAKPOINTS, AD_CONFIG, AD_UNIT_PATH, AD_SIZES } from '../constants/adConfig'
+import { calculateMaxDimensions, isElementViewable } from '../utils/adHelpers'
+
+// Helper to get default sizes for a slot ID (for pre-defined slots)
+function getDefaultSizesForSlot(slotId, isMobile) {
+  switch (slotId) {
+    case 'ad-top-banner':
+      return isMobile ? AD_SIZES.TOP_BANNER.mobile : AD_SIZES.TOP_BANNER.desktop
+    case 'ad-bottom-banner':
+      return isMobile ? AD_SIZES.BOTTOM_BANNER.mobile : AD_SIZES.BOTTOM_BANNER.desktop
+    case 'ad-sidebar-left':
+    case 'ad-sidebar-right':
+      return AD_SIZES.SIDEBAR
+    default:
+      return []
+  }
+}
 
 /**
  * Hook for managing Google Publisher Tag (GPT) ads
@@ -8,11 +25,12 @@ export function useAdManager() {
   const [isMobile, setIsMobile] = useState(false)
   const refreshIntervalsRef = useRef(new Map())
   const slotsRef = useRef(new Map())
+  const sizesRef = useRef(new Map())
 
   // Detect mobile vs desktop
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      setIsMobile(window.innerWidth < AD_BREAKPOINTS.MOBILE)
     }
     
     checkMobile()
@@ -20,12 +38,37 @@ export function useAdManager() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Helper to get sizes for a slot with fallback to defaults
+  const getSizesForSlot = useCallback((slotId) => {
+    let sizes = sizesRef.current.get(slotId)
+    if (!sizes || sizes.length === 0) {
+      sizes = getDefaultSizesForSlot(slotId, isMobile)
+    }
+    return sizes
+  }, [isMobile])
+
+  // Helper to check if a slot is viewable
+  const isSlotViewable = useCallback((slot) => {
+    const slotId = slot.getSlotElementId()
+    const element = document.getElementById(slotId)
+    if (!element) return false
+
+    const sizes = getSizesForSlot(slotId)
+    const { maxWidth, maxHeight } = calculateMaxDimensions(sizes)
+    const fallbackSize = { width: maxWidth, height: maxHeight }
+
+    return isElementViewable(element, fallbackSize)
+  }, [getSizesForSlot])
+
   // Register an ad slot
-  const registerSlot = (slotId, sizes, adUnitPath = '/6355419/Travel/Europe/France/Paris') => {
+  const registerSlot = useCallback((slotId, sizes, adUnitPath = AD_UNIT_PATH) => {
     if (!window.googletag) {
       console.warn('googletag not available')
       return null
     }
+
+    // Store sizes for viewability checks
+    sizesRef.current.set(slotId, sizes)
 
     // Check if slot already exists in our cache
     if (slotsRef.current.has(slotId)) {
@@ -52,10 +95,10 @@ export function useAdManager() {
     })
 
     return slot
-  }
+  }, [])
 
   // Display an ad slot
-  const displaySlot = (slotId) => {
+  const displaySlot = useCallback((slotId) => {
     if (!window.googletag) {
       console.warn('googletag not available')
       return
@@ -64,10 +107,10 @@ export function useAdManager() {
     window.googletag.cmd.push(function() {
       window.googletag.display(slotId)
     })
-  }
+  }, [])
 
-  // Refresh a specific slot
-  const refreshSlot = (slotId) => {
+  // Refresh a specific slot (only if viewable)
+  const refreshSlot = useCallback((slotId) => {
     if (!window.googletag) {
       return
     }
@@ -85,13 +128,16 @@ export function useAdManager() {
       }
       
       if (slot) {
-        window.googletag.pubads().refresh([slot])
+        // Check if slot element is viewable before refreshing
+        if (isSlotViewable(slot)) {
+          window.googletag.pubads().refresh([slot])
+        }
       }
     })
-  }
+  }, [isSlotViewable])
 
-  // Set up auto-refresh for a slot (every 60 seconds)
-  const setupRefresh = (slotId, intervalMs = 60000) => {
+  // Set up auto-refresh for a slot
+  const setupRefresh = useCallback((slotId, intervalMs = AD_CONFIG.REFRESH_INTERVAL) => {
     // Clear existing interval if any
     if (refreshIntervalsRef.current.has(slotId)) {
       clearInterval(refreshIntervalsRef.current.get(slotId))
@@ -102,15 +148,15 @@ export function useAdManager() {
     }, intervalMs)
 
     refreshIntervalsRef.current.set(slotId, interval)
-  }
+  }, [refreshSlot])
 
   // Clean up refresh interval for a slot
-  const cleanupRefresh = (slotId) => {
+  const cleanupRefresh = useCallback((slotId) => {
     if (refreshIntervalsRef.current.has(slotId)) {
       clearInterval(refreshIntervalsRef.current.get(slotId))
       refreshIntervalsRef.current.delete(slotId)
     }
-  }
+  }, [])
 
   // Cleanup all intervals on unmount
   useEffect(() => {
@@ -122,19 +168,29 @@ export function useAdManager() {
     }
   }, [])
 
-  // Refresh all slots
-  const refreshAllSlots = () => {
+  // Refresh all slots (only viewable ones unless forced)
+  const refreshAllSlots = useCallback((force = false) => {
     if (!window.googletag) {
       return
     }
 
     window.googletag.cmd.push(function() {
       const allSlots = window.googletag.pubads().getSlots()
-      if (allSlots.length > 0) {
+      if (allSlots.length === 0) return
+
+      if (force) {
         window.googletag.pubads().refresh(allSlots)
+        return
+      }
+
+      // Filter to only viewable slots
+      const viewableSlots = allSlots.filter(slot => isSlotViewable(slot))
+
+      if (viewableSlots.length > 0) {
+        window.googletag.pubads().refresh(viewableSlots)
       }
     })
-  }
+  }, [isSlotViewable])
 
   return {
     isMobile,

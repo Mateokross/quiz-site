@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import AdSlot from './AdSlot'
 import { useAdManager } from '../../hooks/useAdManager'
+import { AD_SIZES } from '../../constants/adConfig'
+import { calculateMaxDimensions } from '../../utils/adHelpers'
 
 /**
  * Bottom banner ad component
@@ -12,15 +14,10 @@ export default function AdBottomBanner() {
   const { isMobile } = useAdManager()
   const [renderedSize, setRenderedSize] = useState(null)
 
-  // Desktop: 728x90 primary, 320x50 fallback
-  // Mobile: 320x50
-  const desktopSizes = [[728, 90], [320, 50]]
-  const mobileSizes = [[320, 50]]
-  const sizes = isMobile ? mobileSizes : desktopSizes
+  const sizes = isMobile ? AD_SIZES.BOTTOM_BANNER.mobile : AD_SIZES.BOTTOM_BANNER.desktop
 
   // Calculate container dimensions based on ad sizes
-  const maxWidth = Math.max(...sizes.map(size => size[0]))
-  const maxHeight = Math.max(...sizes.map(size => size[1]))
+  const { maxWidth, maxHeight } = calculateMaxDimensions(sizes)
   const [containerWidth, containerHeight] = renderedSize || [maxWidth, maxHeight]
 
   return (

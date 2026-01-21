@@ -1,32 +1,34 @@
 import AdSlot from './AdSlot'
 import { useAdManager } from '../../hooks/useAdManager'
+import { AD_SIZES } from '../../constants/adConfig'
+import { useLazyAd } from '../../hooks/useLazyAd'
 
 /**
  * In-content ad component (between questions)
  * Desktop: 728x90 primary, 300x250 fallback
  * Mobile: 320x50
+ * Uses lazy loading to defer loading until near viewport
  */
 export default function AdInContent({ index }) {
   const { isMobile } = useAdManager()
+  const { containerRef, shouldLoad } = useLazyAd({ rootMargin: '100px' })
 
-  // Desktop: 728x90 primary, 300x250 fallback
-  // Mobile: 320x50
-  const desktopSizes = [[728, 90], [300, 250]]
-  const mobileSizes = [[320, 50]]
-  const sizes = isMobile ? mobileSizes : desktopSizes
+  const sizes = isMobile ? AD_SIZES.IN_CONTENT.mobile : AD_SIZES.IN_CONTENT.desktop
 
   // Use index to create unique slot IDs for each in-content ad
   const slotId = `ad-in-content-${index}`
 
   return (
-    <div className="w-full flex justify-center">
-      <AdSlot
-        slotId={slotId}
-        sizes={sizes}
-        hideOnNoFill={false}
-        autoRefresh={true}
-        className="flex justify-center"
-      />
+    <div ref={containerRef} className="w-full flex justify-center">
+      {shouldLoad && (
+        <AdSlot
+          slotId={slotId}
+          sizes={sizes}
+          hideOnNoFill={false}
+          autoRefresh={true}
+          className="flex justify-center"
+        />
+      )}
     </div>
   )
 }

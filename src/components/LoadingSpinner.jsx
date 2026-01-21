@@ -29,7 +29,7 @@ export default function LoadingSpinner({
 
       {/* Top banner */}
       <div className="w-full fixed top-0 z-20">
-        <AdTopBanner showBorder={false} />
+        <AdTopBanner />
       </div>
 
       <div className="mx-auto text-center animate-fade-in mt-[90px] md:min-w-[480px] lg:min-w-[600px] xl:min-w-[680px] 2xl:min-w-[800px] md:max-w-2xl lg:max-w-2xl xl:max-w-none xl:px-[300px]">

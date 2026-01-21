@@ -24,16 +24,26 @@
       gtag('config', 'G-KW5NKL5MBC');
     </script>
     <!-- Google Publisher Tag (GPT) -->
+    <!-- Preload GPT script for faster loading -->
+    <link rel="preload" href="https://securepubads.g.doubleclick.net/tag/js/gpt.js" as="script" crossorigin="anonymous" />
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
     <script>
       window.googletag = window.googletag || {cmd: []};
       googletag.cmd.push(function() {
-        // Top banner - desktop: 728x90, mobile: 320x100/320x50
+        // Enable Single Request Architecture (SRA) for better performance
+        // SRA bundles requests for multiple ad slots into a single ad request
+        googletag.pubads().enableSingleRequest();
+        
+        // Collapse empty divs globally to improve performance
+        googletag.pubads().collapseEmptyDivs(true);
+        
+        // Note: Ad sizes match AD_SIZES constants in src/constants/adConfig.js
+        // Top banner - desktop: 728x90, 320x50 | mobile: 320x100, 320x50
         googletag
           .defineSlot('/6355419/Travel/Europe/France/Paris', [[728, 90], [320, 100], [320, 50]], 'ad-top-banner')
           .addService(googletag.pubads());
         
-        // Bottom banner - desktop: 728x90, mobile: 320x50
+        // Bottom banner - desktop: 728x90, 320x50 | mobile: 320x50
         googletag
           .defineSlot('/6355419/Travel/Europe/France/Paris', [[728, 90], [320, 50]], 'ad-bottom-banner')
           .addService(googletag.pubads());
