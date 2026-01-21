@@ -404,11 +404,55 @@ isSlotViewable(slot) {
   1. Get element by slotId
   2. If element has dimensions: check actual viewport intersection
   3. If element has no dimensions: use fallback size to check potential visibility
-  4. Return true only if element is in viewport
+  4. Check if element is covered by another element (overlay, modal, etc.)
+  5. Return true only if element is in viewport AND not covered
 }
 ```
 
-This prevents refreshing ads that aren't visible, saving bandwidth and improving performance.
+**Note:** This is custom logic beyond Google GPT's built-in features. GPT provides Active View viewability tracking for reporting purposes, but does not include APIs to detect if custom elements (like modals or interstitials) are covering ads. This custom implementation prevents unnecessary ad refreshes when ads are occluded.
+
+#### Coverage Detection Algorithm
+
+The coverage check uses `document.elementsFromPoint()` to detect if any element is covering the ad. The algorithm works as follows:
+
+1. **Point Sampling**: Checks multiple points across the ad:
+   - Center point
+   - Top-left quadrant (25% from edges)
+   - Bottom-right quadrant (75% from edges)
+
+2. **Topmost Element Detection**: For each point:
+   - Uses `document.elementsFromPoint()` to get all elements at that point
+   - Finds the topmost element that blocks pointer events (skips elements with `pointer-events: none`)
+   - Falls back to the first element if no blocking element is found
+
+3. **Visibility Verification**: Checks if the covering element is actually visible:
+   - `display !== 'none'`
+   - `visibility !== 'hidden'`
+   - `opacity > 0`
+
+4. **Bounding Box Overlap**: Verifies the covering element actually overlaps the ad's bounding box (not just at a single point):
+   ```javascript
+   overlaps = !(
+     coveringRect.right < adRect.left ||
+     coveringRect.left > adRect.right ||
+     coveringRect.bottom < adRect.top ||
+     coveringRect.top > adRect.bottom
+   )
+   ```
+
+5. **Z-Index Thresholds**: Only considers an ad "covered" if the covering element meets z-index criteria:
+   - **Positioned overlays** (fixed/absolute): `z-index >= 20` (modal level)
+   - **General elements**: `z-index >= 50` (interstitial level)
+
+   These thresholds prevent false positives from normal page elements while catching actual overlays.
+
+**Why Custom Implementation?**
+
+- GPT's Active View tracks viewability for reporting but doesn't control refresh behavior
+- Site-specific overlays (modals, interstitials, custom UI) require custom detection
+- Performance optimization (avoiding unnecessary refreshes) is typically handled by publishers
+
+This prevents refreshing ads that aren't visible, saving bandwidth and improving performance. The check works for any overlay (interstitial, modals, popups, etc.), not just specific elements.
 
 ### 2. Size Caching
 

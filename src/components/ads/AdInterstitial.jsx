@@ -27,6 +27,7 @@ export default function AdInterstitial() {
 
   return (
     <div 
+      id="ad-interstitial-overlay"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
       onClick={(e) => {
         // Close when clicking backdrop (optional - you may want to remove this)
