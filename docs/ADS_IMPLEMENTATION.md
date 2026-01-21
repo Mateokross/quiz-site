@@ -25,11 +25,13 @@ src/
 │       ├── AdTopBanner.jsx     # Top banner wrapper
 │       ├── AdBottomBanner.jsx  # Bottom banner wrapper
 │       ├── AdSidebar.jsx       # Sidebar wrapper (left/right)
-│       └── AdInContent.jsx     # In-content ad wrapper
+│       ├── AdInContent.jsx     # In-content ad wrapper
+│       └── AdInterstitial.jsx  # Fullscreen interstitial ad wrapper
 ├── hooks/
 │   ├── useAdManager.js         # Central ad management hook
 │   ├── useSidebarVisibility.js # Sidebar visibility detection
-│   └── useLazyAd.js            # Lazy loading for in-content ads
+│   ├── useLazyAd.js            # Lazy loading for in-content ads
+│   └── useInterstitialAd.js    # Interstitial ad timing and display logic
 ├── constants/
 │   └── adConfig.js             # Ad configuration constants
 └── utils/
@@ -224,6 +226,17 @@ Each wrapper component provides specific styling and behavior:
 - **Sizes**: Desktop: 728x90, 300x250 | Mobile: 320x50
 - **Features**: Lazy loading using Intersection Observer
 
+#### AdInterstitial
+- **Location**: Fullscreen overlay on all pages
+- **Sizes**: 320x480, 300x250, 728x90
+- **Features**: 
+  - Dismissible with close button
+  - Appears 30 seconds after page load
+  - Refreshes every 2 minutes after being closed (timer continues from close time)
+  - Pauses timer when loading screen is visible
+  - Only renders when tab is visible (uses Page Visibility API)
+  - Hides container on no fill
+
 ## Best Practices
 
 ### 1. GPT Best Practices Implemented
@@ -320,6 +333,7 @@ AD_SIZES = {
     desktop: [[728, 90], [300, 250]],
     mobile: [[320, 50]],
   },
+  INTERSTITIAL: [[320, 480], [300, 250], [728, 90]],
 }
 ```
 
@@ -340,6 +354,8 @@ AD_CONFIG = {
   NAVBAR_CONTENT_HEIGHT: 73,      // Navbar height without ad
   CONTENT_MIN_WIDTH_XL: 680,      // Min content width at xl
   SIDEBAR_WIDTH: 300,             // Sidebar ad width
+  INTERSTITIAL_INITIAL_DELAY: 30000,  // 30 seconds
+  INTERSTITIAL_REFRESH_INTERVAL: 120000, // 2 minutes
 }
 ```
 
@@ -364,7 +380,18 @@ AD_CONFIG = {
 **Desktop & Mobile:**
 - Top banner: Fixed at top (728x90 primary, 320x50 fallback)
 - Left/Right sidebars: Fixed (300x250 primary, 160x600 fallback)
+- Interstitial: Fullscreen overlay (320x480, 300x250, 728x90)
 - No bottom banner or in-content ads
+
+### All Pages
+
+**Interstitial Ad:**
+- Fullscreen overlay on all pages
+- Appears 30 seconds after page load
+- Refreshes every 2 minutes after being closed
+- Timer pauses when loading screen is visible
+- Timer pauses when tab is hidden
+- Only renders when tab is visible
 
 ## Performance Optimizations
 
@@ -502,6 +529,55 @@ const { containerRef, shouldLoad } = useLazyAd({ rootMargin: '200px' })
 2. **Interval setup**: Verify `autoRefresh={true}` and refresh interval
 3. **Slot caching**: Check if slot is properly cached
 
+## Interstitial Ad Implementation
+
+### Timing Behavior
+
+The interstitial ad follows a specific timing pattern:
+
+1. **Initial Display**: Appears 30 seconds after page load (only if tab is visible)
+2. **After Close**: Timer starts 2-minute countdown from close time (NOT reset to page load)
+3. **Pause Conditions**: Timer pauses when:
+   - Tab becomes hidden (Page Visibility API)
+   - Loading screen is visible (`isLoadingScreen={true}`)
+4. **Resume**: Timer resumes from where it paused when conditions are met
+5. **Display**: Ad only displays when tab is visible AND timer has elapsed
+
+### Timer Continuation Logic
+
+The timer does NOT reset when the ad is closed. Instead:
+- First show: 30 seconds from page load
+- After close: 2 minutes from close timestamp
+- Timer accumulates elapsed time, accounting for pauses
+- Remaining time is calculated and stored when paused
+- Timer resumes with remaining time when conditions allow
+
+### Page Visibility Integration
+
+Uses the Page Visibility API to ensure ads only render when visible:
+- Listens to `visibilitychange` events
+- Pauses timer when `document.hidden === true`
+- Resumes timer when tab becomes visible
+- Hides ad immediately if tab becomes hidden while ad is showing
+
+### Loading Screen Integration
+
+The interstitial ad respects loading screen state:
+- Accepts `isLoadingScreen` prop from parent components
+- Pauses timer when loading screen is visible
+- Hides ad if currently showing when loading screen appears
+- Resumes timer when loading screen disappears (if tab is visible)
+
+### Component Usage
+
+```javascript
+// In Quiz component (pauses during loading)
+<AdInterstitial isLoadingScreen={resultRevealState === 'loading'} />
+
+// In other components (no loading screen)
+<AdInterstitial isLoadingScreen={false} />
+```
+
 ## Future Improvements
 
 Potential enhancements:
@@ -511,6 +587,7 @@ Potential enhancements:
 3. **Analytics Integration**: Track ad performance metrics
 4. **Dynamic Sizing**: More sophisticated container sizing based on actual ad dimensions
 5. **Sticky Ads**: Enhanced sticky behavior for better viewability
+6. **Interstitial Customization**: Configurable initial delay and refresh intervals per page
 
 ## References
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner'
 import AdTopBanner from './ads/AdTopBanner'
 import AdSidebar from './ads/AdSidebar'
+import AdInterstitial from './ads/AdInterstitial'
 import { useAdManager } from '../hooks/useAdManager'
 
 // Import quiz configs
@@ -116,6 +117,9 @@ export default function SharedResult() {
       className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative"
       style={{ backgroundColor }}
     >
+      {/* Interstitial ad */}
+      <AdInterstitial isLoadingScreen={false} />
+      
       {/* Sidebars */}
       <AdSidebar position="left" />
       <AdSidebar position="right" />

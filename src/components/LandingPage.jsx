@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom'
 import quizRegistry from '../quiz-configs/index.json'
+import AdInterstitial from './ads/AdInterstitial'
 
 export default function LandingPage() {
   const currentYear = new Date().getFullYear()
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Interstitial ad */}
+      <AdInterstitial isLoadingScreen={false} />
       {/* Header */}
       <header className="w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12 lg:py-16">

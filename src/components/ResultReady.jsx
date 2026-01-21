@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import AdTopBanner from './ads/AdTopBanner'
 import AdSidebar from './ads/AdSidebar'
+import AdInterstitial from './ads/AdInterstitial'
 import { useAdManager } from '../hooks/useAdManager'
 
 export default function ResultReady({ 
@@ -25,6 +26,9 @@ export default function ResultReady({
       className="min-h-screen flex flex-col items-center justify-center p-4 relative"
       style={{ backgroundColor }}
     >
+      {/* Interstitial ad */}
+      <AdInterstitial isLoadingScreen={false} />
+      
       {/* Sidebars */}
       <AdSidebar position="left" />
       <AdSidebar position="right" />

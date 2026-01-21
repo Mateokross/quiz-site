@@ -21,6 +21,7 @@ export const AD_SIZES = {
     desktop: [[728, 90], [300, 250]],
     mobile: [[320, 50]],
   },
+  INTERSTITIAL: [[320, 480], [300, 250], [728, 90]], // Common interstitial sizes
 }
 
 // Breakpoints and dimensions
@@ -35,6 +36,8 @@ export const AD_CONFIG = {
   NAVBAR_CONTENT_HEIGHT: 73, // Height of navbar content (without ad)
   CONTENT_MIN_WIDTH_XL: 680, // Minimum content width at xl breakpoint
   SIDEBAR_WIDTH: 300, // Width of sidebar ads
+  INTERSTITIAL_INITIAL_DELAY: 30000, // 30 seconds
+  INTERSTITIAL_REFRESH_INTERVAL: 120000, // 2 minutes
 }
 
 // Calculate required viewport width for sidebars

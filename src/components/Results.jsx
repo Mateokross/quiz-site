@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, shareOnWhatsApp, downloadResultImage, shareResult } from '../utils/shareResult'
 import AdTopBanner from './ads/AdTopBanner'
 import AdSidebar from './ads/AdSidebar'
+import AdInterstitial from './ads/AdInterstitial'
 import { useAdManager } from '../hooks/useAdManager'
 
 export default function Results({ 
@@ -138,6 +139,9 @@ export default function Results({
       className="min-h-screen flex flex-col items-center justify-center p-4 py-16 relative"
       style={{ backgroundColor }}
     >
+      {/* Interstitial ad */}
+      <AdInterstitial isLoadingScreen={false} />
+      
       {/* Sidebars */}
       <AdSidebar position="left" />
       <AdSidebar position="right" />

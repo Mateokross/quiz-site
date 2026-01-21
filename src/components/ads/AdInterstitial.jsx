@@ -1,0 +1,80 @@
+import { useState, useEffect } from 'react'
+import AdSlot from './AdSlot'
+import { useInterstitialAd } from '../../hooks/useInterstitialAd'
+import { AD_SIZES } from '../../constants/adConfig'
+
+/**
+ * Interstitial ad component (fullscreen overlay)
+ * Appears 30 seconds after page load, then every 2 minutes after being closed
+ * Pauses when loading screen is visible or tab is hidden
+ */
+export default function AdInterstitial({ isLoadingScreen = false }) {
+  const { shouldShow, onClose } = useInterstitialAd(isLoadingScreen)
+  const [hasRendered, setHasRendered] = useState(false)
+
+  // Only render ad slot when we're about to show it (lazy initialization)
+  useEffect(() => {
+    if (shouldShow && !hasRendered) {
+      setHasRendered(true)
+    }
+  }, [shouldShow, hasRendered])
+
+  if (!shouldShow) {
+    return null
+  }
+
+  const sizes = AD_SIZES.INTERSTITIAL
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      onClick={(e) => {
+        // Close when clicking backdrop (optional - you may want to remove this)
+        if (e.target === e.currentTarget) {
+          onClose()
+        }
+      }}
+    >
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-white"
+        aria-label="Close ad"
+      >
+        <svg
+          className="w-6 h-6 text-gray-800"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      {/* Ad container */}
+      <div className="relative max-w-full max-h-full flex items-center justify-center p-4">
+        {hasRendered && (
+          <AdSlot
+            slotId="ad-interstitial"
+            sizes={sizes}
+            hideOnNoFill={true}
+            autoRefresh={false}
+            useMaxSize={false}
+            className="flex justify-center"
+            onSlotRender={(event) => {
+              // Hide if no fill
+              if (event.isEmpty) {
+                onClose()
+              }
+            }}
+          />
+        )}
+      </div>
+    </div>
+  )
+}

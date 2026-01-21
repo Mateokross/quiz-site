@@ -9,6 +9,7 @@ import AdTopBanner from './ads/AdTopBanner'
 import AdBottomBanner from './ads/AdBottomBanner'
 import AdSidebar from './ads/AdSidebar'
 import AdInContent from './ads/AdInContent'
+import AdInterstitial from './ads/AdInterstitial'
 import { useAdManager } from '../hooks/useAdManager'
 import { AD_CONFIG } from '../constants/adConfig'
 
@@ -178,6 +179,9 @@ export default function Quiz() {
 
   return (
     <div style={{ backgroundColor }}>
+      {/* Interstitial ad */}
+      <AdInterstitial isLoadingScreen={resultRevealState === 'loading'} />
+      
       {/* Sidebars - Desktop only */}
       <AdSidebar position="left" navbarTopOffset={navbarTotalHeight} />
       <AdSidebar position="right" navbarTopOffset={navbarTotalHeight} />
