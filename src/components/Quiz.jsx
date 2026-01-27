@@ -47,9 +47,11 @@ export default function Quiz() {
   useEffect(() => {
     if (prevIsCompleteRef.current && !isComplete && currentQuestionIndex === 0) {
       // Quiz was reset - refresh all ads
+      // Use longer delay to ensure sidebar slots are registered and displayed
       const timer = setTimeout(() => {
-        refreshAllSlots()
-      }, 100)
+        // Force refresh sidebar slots to ensure they show up
+        refreshAllSlots(false, ['ad-sidebar-left', 'ad-sidebar-right'])
+      }, 300)
       return () => clearTimeout(timer)
     }
     prevIsCompleteRef.current = isComplete
@@ -80,18 +82,35 @@ export default function Quiz() {
   }, [quizConfig])
 
   useEffect(() => {
-    // Scroll to current question on mount or question change
+    // Scroll to current question title on mount or question change
     if (quizConfig?.questions && quizConfig.questions[currentQuestionIndex]) {
       const timer = setTimeout(() => {
         const question = quizConfig.questions[currentQuestionIndex]
-        const element = document.getElementById(`question-${question.id}`)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // Target the question title, not the container
+        const questionTitleElement = document.getElementById(`question-title-${question.id}`)
+        if (questionTitleElement) {
+          // Calculate navbar height: ad height + navbar content (73px) + progress bar area
+          const navbar = document.querySelector('[class*="sticky top-0"]')
+          const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0
+          // Add small offset for visual spacing
+          const offset = navbarHeight + 16
+          
+          // Get the position of the question title
+          const elementTop = questionTitleElement.getBoundingClientRect().top + window.pageYOffset
+          
+          // Scroll to position accounting for navbar height
+          window.scrollTo({ 
+            top: elementTop - offset, 
+            behavior: 'smooth' 
+          })
+          
+          // Focus the question title for accessibility
+          questionTitleElement.focus({ preventScroll: true })
         }
       }, 400) // Increased delay to ensure DOM has updated
       return () => clearTimeout(timer)
     }
-  }, [currentQuestionIndex, quizConfig])
+  }, [currentQuestionIndex, quizConfig, adHeight])
 
   if (loading) {
     return (
@@ -174,21 +193,19 @@ export default function Quiz() {
     )
   }
 
-  // Calculate navbar total height: ad height + navbar content
-  const navbarTotalHeight = adHeight + AD_CONFIG.NAVBAR_CONTENT_HEIGHT
-
   return (
     <div style={{ backgroundColor }}>
       {/* Interstitial ad */}
       <AdInterstitial />
       
-      {/* Sidebars - Desktop only */}
-      <AdSidebar position="left" navbarTopOffset={navbarTotalHeight} />
-      <AdSidebar position="right" navbarTopOffset={navbarTotalHeight} />
+      {/* Sidebars - Desktop only, full viewport height */}
+      <AdSidebar position="left" />
+      <AdSidebar position="right" />
 
       {/* Navbar with integrated ad */}
+      {/* Add padding on sides when sidebars are visible (xl breakpoint) to account for sidebar width */}
       <div 
-        className="sticky top-0 z-20 backdrop-blur-sm"
+        className="sticky top-0 z-20 backdrop-blur-sm xl:pl-[300px] xl:pr-[300px]"
         style={{ 
           backgroundColor: navbarBackgroundColor === '#FFFFFF' 
             ? 'rgba(255, 255, 255, 0.9)' 
@@ -203,26 +220,29 @@ export default function Quiz() {
           onHeightChange={setAdHeight}
         />
         
-        {/* Navbar content */}
-        <div className="p-4">
-          <h1 className="text-lg font-semibold text-center" style={{ color: navbarTitleColor }}>
-            {quizConfig.title}
-          </h1>
-        </div>
-        {/* Progress Bar */}
-        <div className="w-full relative">
-          {/* Progress Percentage Text */}
-          <div className="absolute top-0 right-4 -mt-5 text-xs text-gray-500">
-            {progressPercentage}%
+        {/* Navbar content and progress bar container */}
+        <div className="xl:pb-2">
+          {/* Navbar content */}
+          <div className="p-4 pb-2">
+            <h1 className="text-lg font-semibold text-center" style={{ color: navbarTitleColor }}>
+              {quizConfig.title}
+            </h1>
           </div>
-          <div className="w-full h-1 bg-gray-200">
-            <div
-              className="h-full transition-all duration-300 ease-out"
-              style={{
-                width: `${progressPercentage}%`,
-                backgroundColor: progressColor,
-              }}
-            />
+          {/* Progress Bar */}
+          <div className="w-full relative mt-2 xl:px-4">
+            {/* Progress Percentage Text */}
+            <div className="absolute top-0 right-4 -mt-5 text-xs text-gray-500">
+              {progressPercentage}%
+            </div>
+            <div className="w-full h-1 bg-gray-200 xl:rounded-full overflow-hidden">
+              <div
+                className="h-full transition-all duration-300 ease-out xl:rounded-full"
+                style={{
+                  width: `${progressPercentage}%`,
+                  backgroundColor: progressColor,
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

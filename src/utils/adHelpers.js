@@ -3,6 +3,90 @@
  */
 
 /**
+ * Create a GPT sizeMapping based on width breakpoints
+ * Each breakpoint includes all sizes that fit at that width or smaller
+ * @param {Array<Array<number>>} sizes - Array of [width, height] pairs, ordered largest to smallest
+ * @returns {Object|null} - googletag.sizeMapping() object or null if googletag not available
+ */
+export function createWidthBasedMapping(sizes) {
+  if (!window.googletag || !sizes || sizes.length === 0) {
+    return null
+  }
+
+  // Get unique widths in descending order
+  const uniqueWidths = [...new Set(sizes.map(size => size[0]))].sort((a, b) => b - a)
+  
+  const mapping = window.googletag.sizeMapping()
+  
+  // For each width breakpoint, include all sizes that fit (width <= breakpoint)
+  uniqueWidths.forEach((width, index) => {
+    // Get all sizes that fit at this width or smaller
+    const eligibleSizes = sizes.filter(size => size[0] <= width)
+    if (eligibleSizes.length > 0) {
+      mapping.addSize([width, 0], eligibleSizes)
+    }
+  })
+  
+  // Always add base fallback (smallest size)
+  if (sizes.length > 0) {
+    const smallestSize = sizes[sizes.length - 1]
+    mapping.addSize([0, 0], [smallestSize])
+  }
+  
+  return mapping.build()
+}
+
+/**
+ * Create a GPT sizeMapping based on width and height breakpoints
+ * Each breakpoint includes all sizes that fit both width and height constraints
+ * @param {Array<Array<number>>} sizes - Array of [width, height] pairs, ordered largest to smallest
+ * @returns {Object|null} - googletag.sizeMapping() object or null if googletag not available
+ */
+export function createHeightAwareMapping(sizes) {
+  if (!window.googletag || !sizes || sizes.length === 0) {
+    return null
+  }
+
+  // Get unique [width, height] combinations in descending order
+  // Sort by width first, then height
+  const uniqueCombinations = []
+  const seen = new Set()
+  
+  sizes.forEach(size => {
+    const key = `${size[0]},${size[1]}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      uniqueCombinations.push([size[0], size[1]])
+    }
+  })
+  
+  // Sort descending: width first, then height
+  uniqueCombinations.sort((a, b) => {
+    if (b[0] !== a[0]) return b[0] - a[0]
+    return b[1] - a[1]
+  })
+  
+  const mapping = window.googletag.sizeMapping()
+  
+  // For each [width, height] breakpoint, include all sizes that fit both dimensions
+  uniqueCombinations.forEach(([width, height]) => {
+    // Get all sizes that fit both width and height constraints
+    const eligibleSizes = sizes.filter(size => size[0] <= width && size[1] <= height)
+    if (eligibleSizes.length > 0) {
+      mapping.addSize([width, height], eligibleSizes)
+    }
+  })
+  
+  // Add base fallback (smallest size)
+  if (sizes.length > 0) {
+    const smallestSize = sizes[sizes.length - 1]
+    mapping.addSize([0, 0], [smallestSize])
+  }
+  
+  return mapping.build()
+}
+
+/**
  * Calculate maximum width and height from an array of ad sizes
  * @param {Array<Array<number>>} sizes - Array of [width, height] pairs
  * @returns {Object} - { maxWidth, maxHeight }
@@ -123,9 +207,10 @@ function isElementCovered(element, fallbackSize = null) {
  * Check if an element is currently viewable in the viewport
  * @param {HTMLElement} element - The element to check
  * @param {Object} fallbackSize - Optional fallback size if element has no dimensions
+ * @param {Object} constraints - Optional width/height constraints { minWidth, minHeight }
  * @returns {boolean} - True if element is viewable
  */
-export function isElementViewable(element, fallbackSize = null) {
+export function isElementViewable(element, fallbackSize = null, constraints = null) {
   if (!element) {
     return false
   }
@@ -138,6 +223,16 @@ export function isElementViewable(element, fallbackSize = null) {
   if ((width === 0 || height === 0) && fallbackSize) {
     width = fallbackSize.width || width
     height = fallbackSize.height || height
+  }
+
+  // Check width/height constraints if provided (for interstitial, sidebar, etc.)
+  if (constraints) {
+    if (constraints.minWidth && width < constraints.minWidth) {
+      return false
+    }
+    if (constraints.minHeight && height < constraints.minHeight) {
+      return false
+    }
   }
 
   // Check if element is in viewport

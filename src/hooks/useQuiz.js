@@ -74,9 +74,26 @@ export function useQuiz(quizConfig) {
         requestAnimationFrame(() => {
           setTimeout(() => {
             const question = quizConfig.questions[index]
-            const element = document.getElementById(`question-${question.id}`)
-            if (element) {
-              element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            // Target the question title, not the container
+            const questionTitleElement = document.getElementById(`question-title-${question.id}`)
+            if (questionTitleElement) {
+              // Calculate navbar height dynamically
+              const navbar = document.querySelector('[class*="sticky top-0"]')
+              const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0
+              // Add small offset for visual spacing
+              const offset = navbarHeight + 16
+              
+              // Get the position of the question title
+              const elementTop = questionTitleElement.getBoundingClientRect().top + window.pageYOffset
+              
+              // Scroll to position accounting for navbar height
+              window.scrollTo({ 
+                top: elementTop - offset, 
+                behavior: 'smooth' 
+              })
+              
+              // Focus the question title for accessibility
+              questionTitleElement.focus({ preventScroll: true })
             }
           }, 100)
         })

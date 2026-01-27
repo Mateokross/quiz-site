@@ -1,5 +1,4 @@
 import AdSlot from './AdSlot'
-import { useAdManager } from '../../hooks/useAdManager'
 import { AD_SIZES } from '../../constants/adConfig'
 import { useLazyAd } from '../../hooks/useLazyAd'
 
@@ -10,10 +9,9 @@ import { useLazyAd } from '../../hooks/useLazyAd'
  * Uses lazy loading to defer loading until near viewport
  */
 export default function AdInContent({ index }) {
-  const { isMobile } = useAdManager()
   const { containerRef, shouldLoad } = useLazyAd({ rootMargin: '100px' })
 
-  const sizes = isMobile ? AD_SIZES.IN_CONTENT.mobile : AD_SIZES.IN_CONTENT.desktop
+  const sizes = AD_SIZES.IN_CONTENT
 
   // Use index to create unique slot IDs for each in-content ad
   const slotId = `ad-in-content-${index}`

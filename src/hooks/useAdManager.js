@@ -1,20 +1,43 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { AD_BREAKPOINTS, AD_CONFIG, AD_UNIT_PATH, AD_SIZES } from '../constants/adConfig'
-import { calculateMaxDimensions, isElementViewable } from '../utils/adHelpers'
+import { calculateMaxDimensions, isElementViewable, createWidthBasedMapping, createHeightAwareMapping } from '../utils/adHelpers'
 
 // Helper to get default sizes for a slot ID (for pre-defined slots)
-function getDefaultSizesForSlot(slotId, isMobile) {
+function getDefaultSizesForSlot(slotId) {
   switch (slotId) {
     case 'ad-top-banner':
-      return isMobile ? AD_SIZES.TOP_BANNER.mobile : AD_SIZES.TOP_BANNER.desktop
+      return AD_SIZES.TOP_BANNER
     case 'ad-bottom-banner':
-      return isMobile ? AD_SIZES.BOTTOM_BANNER.mobile : AD_SIZES.BOTTOM_BANNER.desktop
+      return AD_SIZES.BOTTOM_BANNER
     case 'ad-sidebar-left':
     case 'ad-sidebar-right':
       return AD_SIZES.SIDEBAR
+    case 'ad-interstitial':
+      return AD_SIZES.INTERSTITIAL
     default:
+      // Check if it's an in-content ad (pattern: ad-in-content-{index})
+      if (slotId.startsWith('ad-in-content-')) {
+        return AD_SIZES.IN_CONTENT
+      }
       return []
   }
+}
+
+// Helper to determine if a slot needs height-aware mapping
+function needsHeightAwareMapping(slotId) {
+  return slotId.startsWith('ad-in-content-') || 
+         slotId === 'ad-sidebar-left' || 
+         slotId === 'ad-sidebar-right' || 
+         slotId === 'ad-interstitial'
+}
+
+// Helper to check if a slot is pre-defined in index.html (already has sizeMapping)
+function isPreDefinedSlot(slotId) {
+  return slotId === 'ad-top-banner' ||
+         slotId === 'ad-bottom-banner' ||
+         slotId === 'ad-sidebar-left' ||
+         slotId === 'ad-sidebar-right' ||
+         slotId === 'ad-interstitial'
 }
 
 /**
@@ -22,30 +45,18 @@ function getDefaultSizesForSlot(slotId, isMobile) {
  * Handles slot registration, refresh intervals, and no-fill detection
  */
 export function useAdManager() {
-  const [isMobile, setIsMobile] = useState(false)
   const refreshIntervalsRef = useRef(new Map())
   const slotsRef = useRef(new Map())
   const sizesRef = useRef(new Map())
-
-  // Detect mobile vs desktop
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < AD_BREAKPOINTS.MOBILE)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   // Helper to get sizes for a slot with fallback to defaults
   const getSizesForSlot = useCallback((slotId) => {
     let sizes = sizesRef.current.get(slotId)
     if (!sizes || sizes.length === 0) {
-      sizes = getDefaultSizesForSlot(slotId, isMobile)
+      sizes = getDefaultSizesForSlot(slotId)
     }
     return sizes
-  }, [isMobile])
+  }, [])
 
   // Helper to check if a slot is viewable
   const isSlotViewable = useCallback((slot) => {
@@ -84,6 +95,18 @@ export function useAdManager() {
       if (!slot) {
         slot = window.googletag.defineSlot(adUnitPath, sizes, slotId)
         if (slot) {
+          // Only apply sizeMapping for runtime-created slots (e.g., in-content ads)
+          // Pre-defined slots in index.html already have sizeMapping applied, so skip it
+          if (!isPreDefinedSlot(slotId)) {
+            const mapping = needsHeightAwareMapping(slotId) 
+              ? createHeightAwareMapping(sizes)
+              : createWidthBasedMapping(sizes)
+            
+            if (mapping) {
+              slot.defineSizeMapping(mapping)
+            }
+          }
+          
           slot.addService(window.googletag.pubads())
         }
       }
@@ -169,7 +192,8 @@ export function useAdManager() {
   }, [])
 
   // Refresh all slots (only viewable ones unless forced)
-  const refreshAllSlots = useCallback((force = false) => {
+  // forceSlotIds: array of slot IDs to force refresh regardless of viewability
+  const refreshAllSlots = useCallback((force = false, forceSlotIds = []) => {
     if (!window.googletag) {
       return
     }
@@ -183,17 +207,28 @@ export function useAdManager() {
         return
       }
 
-      // Filter to only viewable slots
-      const viewableSlots = allSlots.filter(slot => isSlotViewable(slot))
+      // Get slots to force refresh
+      const forceRefreshSlots = forceSlotIds.length > 0
+        ? allSlots.filter(slot => forceSlotIds.includes(slot.getSlotElementId()))
+        : []
 
-      if (viewableSlots.length > 0) {
-        window.googletag.pubads().refresh(viewableSlots)
+      // Filter to only viewable slots (excluding force-refresh slots)
+      const viewableSlots = allSlots.filter(slot => {
+        const slotId = slot.getSlotElementId()
+        // Include if it's in force list or is viewable
+        return forceSlotIds.includes(slotId) || isSlotViewable(slot)
+      })
+
+      // Combine and deduplicate
+      const slotsToRefresh = [...new Set([...forceRefreshSlots, ...viewableSlots])]
+
+      if (slotsToRefresh.length > 0) {
+        window.googletag.pubads().refresh(slotsToRefresh)
       }
     })
   }, [isSlotViewable])
 
   return {
-    isMobile,
     registerSlot,
     displaySlot,
     refreshSlot,

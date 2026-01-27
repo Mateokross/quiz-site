@@ -108,8 +108,13 @@ When the page loads, GPT is initialized:
 googletag.pubads().enableSingleRequest();  // Bundle requests
 googletag.pubads().collapseEmptyDivs(true); // Auto-collapse empty divs
 
-// 4. Pre-define slots (optional, can also be defined dynamically)
-googletag.defineSlot(adUnitPath, sizes, slotId).addService(googletag.pubads());
+// 4. Pre-define slots with sizeMapping
+// Pre-defined slots: ad-top-banner, ad-bottom-banner, ad-sidebar-left, 
+// ad-sidebar-right, ad-interstitial
+// These slots have sizeMapping applied here to avoid applying it twice
+googletag.defineSlot(adUnitPath, sizes, slotId)
+  .defineSizeMapping(sizeMapping)  // Responsive size selection
+  .addService(googletag.pubads());
 ```
 
 ### 2. Component Mount (React)
@@ -149,12 +154,21 @@ registerSlot(slotId, sizes, adUnitPath)
     ↓
 3. If not cached:
    a. Check if slot was pre-defined in index.html
-   b. If not found, define new slot
-   c. Add service to pubads()
-   d. Cache slot in slotsRef
+      - Pre-defined slots: ad-top-banner, ad-bottom-banner, 
+        ad-sidebar-left, ad-sidebar-right, ad-interstitial
+      - These already have sizeMapping applied in index.html
+    ↓
+   b. If not found (runtime slot, e.g., in-content ads):
+      - Define new slot with googletag.defineSlot()
+      - Apply sizeMapping (width-based or height-aware)
+      - Add service to pubads()
+    ↓
+   c. Cache slot in slotsRef
     ↓
 4. Return slot object
 ```
+
+**Important:** Pre-defined slots in `index.html` already have sizeMapping applied during initialization. The `registerSlot` function detects pre-defined slots and skips applying sizeMapping again to avoid conflicts. Only runtime-created slots (like `ad-in-content-{index}`) get sizeMapping applied in `registerSlot`.
 
 ### 4. Refresh Flow
 
@@ -309,42 +323,77 @@ googletag.pubads().collapseEmptyDivs(true);
 
 #### Helper Functions
 - `calculateMaxDimensions`: Calculates max width/height from sizes
-- `isElementViewable`: Checks if element is in viewport
+- `isElementViewable`: Checks if element is in viewport (supports width/height constraints)
+- `createWidthBasedMapping`: Creates GPT sizeMapping based on width breakpoints
+- `createHeightAwareMapping`: Creates GPT sizeMapping based on width and height breakpoints
 - `getDefaultSizesForSlot`: Provides fallback sizes for pre-defined slots
+- `isPreDefinedSlot`: Checks if a slot is pre-defined in `index.html` (prevents double sizeMapping)
+- `needsHeightAwareMapping`: Determines if a slot requires height-aware sizeMapping
 
 ## Configuration
 
 ### Ad Sizes
 
-Defined in `src/constants/adConfig.js`:
+Defined in `src/constants/adConfig.js`. All sizes are ordered from largest to smallest (width first, then height):
 
 ```javascript
 AD_SIZES = {
-  TOP_BANNER: {
-    desktop: [[728, 90], [320, 50]],
-    mobile: [[320, 100], [320, 50]],
-  },
-  BOTTOM_BANNER: {
-    desktop: [[728, 90], [320, 50]],
-    mobile: [[320, 50]],
-  },
-  SIDEBAR: [[300, 250], [160, 600]],
-  IN_CONTENT: {
-    desktop: [[728, 90], [300, 250]],
-    mobile: [[320, 50]],
-  },
-  INTERSTITIAL: [[320, 480], [300, 250], [728, 90]],
+  // Top banner: 970x250, 728x90, 468x60, 336x280, 300x250, 320x100, 320x50, 300x100, 300x50, 234x60
+  TOP_BANNER: [
+    [970, 250], [728, 90], [468, 60], [336, 280], [300, 250],
+    [320, 100], [320, 50], [300, 100], [300, 50], [234, 60]
+  ],
+  // Bottom banner: 970x90, 728x90, 468x60, 320x100, 320x50, 300x100, 300x50, 234x60
+  BOTTOM_BANNER: [
+    [970, 90], [728, 90], [468, 60], [320, 100], [320, 50],
+    [300, 100], [300, 50], [234, 60]
+  ],
+  // Sidebar: 300x600, 160x600, 120x600 (desktop only, height-aware)
+  SIDEBAR: [
+    [300, 600], [160, 600], [120, 600]
+  ],
+  // In-content: 728x90, 336x280, 300x250, 250x250, 200x200, 180x150, 468x60, 320x100, 320x50, 300x100, 300x50, 234x60, 125x125
+  IN_CONTENT: [
+    [728, 90], [336, 280], [300, 250], [250, 250], [200, 200], [180, 150],
+    [468, 60], [320, 100], [320, 50], [300, 100], [300, 50], [234, 60], [125, 125]
+  ],
+  // Interstitial: 480x320, 320x480, 336x280, 300x250 (height-aware)
+  INTERSTITIAL: [
+    [480, 320], [320, 480], [336, 280], [300, 250]
+  ],
 }
 ```
+
+### Size Mapping (Responsive Ad Selection)
+
+The implementation uses GPT's `sizeMapping()` API to automatically select the best ad size based on viewport dimensions. This ensures ads always fit their available space.
+
+**Width-based mapping** (Top/Bottom banners):
+- Breakpoints are derived from each unique ad size width
+- At each breakpoint, all sizes that fit (width ≤ breakpoint) are included
+- Example: At 728px viewport width, sizes 728x90, 468x60, 336x280, 300x250, 320x100, 320x50, etc. are eligible
+
+**Height-aware mapping** (Sidebar, In-content, Interstitial):
+- Breakpoints use both width and height constraints
+- At each [width, height] breakpoint, sizes that fit both dimensions are included
+- Example: At [300, 600] viewport, sidebar sizes 300x600, 160x600, 120x600 are eligible
+
+**Benefits:**
+- True responsiveness: GPT automatically selects the largest size that fits
+- No manual breakpoint management: breakpoints derived from ad sizes themselves
+- Optimal fill: Always requests the biggest possible ad size for the viewport
+- Fallback handling: Base mapping (0x0) ensures a fallback size is always available
 
 ### Breakpoints
 
 ```javascript
 AD_BREAKPOINTS = {
-  MOBILE: 768,  // Tailwind md breakpoint
+  MOBILE: 768,  // Tailwind md breakpoint (legacy, not used for size selection)
   XL: 1280,    // Tailwind xl breakpoint - when sidebars appear
 }
 ```
+
+**Note:** Size selection is now handled by GPT's sizeMapping API, which uses viewport dimensions directly. The `MOBILE` breakpoint is kept for backward compatibility but is no longer used for ad size selection.
 
 ### Configuration Values
 
@@ -363,24 +412,20 @@ AD_CONFIG = {
 
 ### Quiz Page
 
-**Desktop:**
-- Top banner: Above navbar (728x90 primary, 320x50 fallback)
-- Bottom banner: Fixed at bottom (728x90 primary, 320x50 fallback)
-- Left/Right sidebars: Fixed, follow scroll (300x250 primary, 160x600 fallback)
-- In-content: Between questions (728x90 primary, 300x250 fallback)
+**All Devices:**
+- Top banner: Above navbar (responsive - selects largest size that fits: 970x250, 728x90, 468x60, 336x280, 300x250, 320x100, 320x50, etc.)
+- Bottom banner: Fixed at bottom (responsive - selects largest size that fits: 970x90, 728x90, 468x60, 320x100, 320x50, etc.)
+- Left/Right sidebars: Fixed, follow scroll (desktop only, height-aware: 300x600, 160x600, 120x600)
+- In-content: Between questions (responsive, height-aware: 728x90, 336x280, 300x250, 250x250, 200x200, 180x150, 468x60, 320x100, 320x50, etc.)
 
-**Mobile:**
-- Top banner: Above navbar (320x100 primary, 320x50 fallback)
-- Bottom banner: Fixed at bottom (320x50)
-- In-content: Between questions (320x50)
-- No sidebars
+**Note:** Ad sizes are automatically selected by GPT's sizeMapping API based on viewport dimensions. The system always requests the largest size that fits the available space.
 
 ### Results/Loading/Share Pages
 
 **Desktop & Mobile:**
-- Top banner: Fixed at top (728x90 primary, 320x50 fallback)
-- Left/Right sidebars: Fixed (300x250 primary, 160x600 fallback)
-- Interstitial: Fullscreen overlay (320x480, 300x250, 728x90)
+- Top banner: Fixed at top (responsive - selects largest size that fits)
+- Left/Right sidebars: Fixed (desktop only, height-aware: 300x600, 160x600, 120x600)
+- Interstitial: Fullscreen overlay (height-aware: 480x320, 320x480, 336x280, 300x250)
 - No bottom banner or in-content ads
 
 ### All Pages
@@ -484,19 +529,19 @@ GPT slot objects are cached in `slotsRef` to:
 
 ### Adding a New Ad Placement
 
-1. **Define sizes in `adConfig.js`** (if new type):
+1. **Define sizes in `adConfig.js`** (ordered largest to smallest):
 ```javascript
-AD_SIZES.NEW_PLACEMENT = {
-  desktop: [[728, 90], [320, 50]],
-  mobile: [[320, 50]],
-}
+AD_SIZES.NEW_PLACEMENT = [
+  [728, 90], [468, 60], [336, 280], [300, 250], [320, 100], [320, 50]
+]
 ```
 
 2. **Create wrapper component** (if needed):
 ```javascript
+import { AD_SIZES } from '../../constants/adConfig'
+
 export default function AdNewPlacement() {
-  const { isMobile } = useAdManager()
-  const sizes = isMobile ? AD_SIZES.NEW_PLACEMENT.mobile : AD_SIZES.NEW_PLACEMENT.desktop
+  const sizes = AD_SIZES.NEW_PLACEMENT
   
   return (
     <AdSlot
@@ -508,6 +553,32 @@ export default function AdNewPlacement() {
   )
 }
 ```
+
+3. **Choose slot definition approach:**
+
+   **Option A: Pre-define in `index.html` (recommended for frequently used slots)**
+   ```javascript
+   // In index.html, add sizeMapping during initialization
+   var newPlacementSizes = [[728, 90], [468, 60], [336, 280], [300, 250], [320, 100], [320, 50]];
+   var newPlacementMapping = googletag.sizeMapping()
+     .addSize([728, 0], newPlacementSizes)
+     .addSize([468, 0], [[468, 60], [336, 280], [300, 250], [320, 100], [320, 50]])
+     // ... add more breakpoints
+     .addSize([0, 0], [[320, 50]])
+     .build();
+   googletag
+     .defineSlot('/6355419/Travel/Europe/France/Paris', newPlacementSizes, 'ad-new-placement')
+     .defineSizeMapping(newPlacementMapping)
+     .addService(googletag.pubads());
+   ```
+   **Note:** If you pre-define a slot in `index.html`, you must also add it to the `isPreDefinedSlot()` function in `useAdManager.js` to prevent double sizeMapping.
+
+   **Option B: Runtime definition (for dynamic slots like in-content ads)**
+   ```javascript
+   // No changes needed - registerSlot() automatically applies sizeMapping
+   // The component just uses AdSlot with the slotId and sizes
+   ```
+   **Note:** Runtime slots automatically get sizeMapping applied by `registerSlot()`. For height-aware placements (sidebar, in-content, interstitial), `registerSlot()` uses `createHeightAwareMapping()` automatically.
 
 3. **Use in page component**:
 ```javascript

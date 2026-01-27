@@ -43,11 +43,16 @@ export default function Question({
   return (
     <div 
       id={`question-${question.id}`}
-      className="min-h-screen flex flex-col justify-center p-4 py-16"
+      className="min-h-screen flex flex-col p-4 py-16"
       style={{ backgroundColor }}
     >
       <div className="max-w-2xl mx-auto w-full">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center" style={{ color: accentColor }}>
+        <h2 
+          id={`question-title-${question.id}`}
+          tabIndex="-1"
+          className="text-2xl md:text-3xl font-bold mb-8 text-center scroll-mt-4 focus:outline-none"
+          style={{ color: accentColor }}
+        >
           {question.text}
         </h2>
         

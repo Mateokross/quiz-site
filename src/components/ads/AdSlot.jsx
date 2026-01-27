@@ -49,29 +49,47 @@ export default function AdSlot({
     // This ensures ads show up when navigating between pages
     setIsVisible(true)
 
-    // Register and display the slot
-    if (window.googletag && containerRef.current) {
-      // Register slot
+    // Wait for DOM element to be available before registering/displaying
+    const initializeSlot = () => {
+      if (!window.googletag || !containerRef.current) {
+        return false
+      }
+
+      // Register slot (handles both new and pre-defined slots)
       registerSlot(slotId, sizes, adUnitPath)
 
-      // Display slot
+      // Display slot - ensure it's displayed even if pre-defined
       displaySlot(slotId)
 
       // Set up refresh if enabled
       if (autoRefresh) {
         setupRefresh(slotId, refreshInterval)
       }
-    }
 
-    // Set up no-fill detection
-    if (window.googletag) {
+      // Set up no-fill detection
       window.googletag.cmd.push(function() {
         window.googletag.pubads().addEventListener('slotRenderEnded', handleSlotRenderEnded)
       })
+
+      return true
+    }
+
+    // Try immediately, then retry if element not ready
+    let displayTimer = null
+    if (initializeSlot()) {
+      // Successfully initialized
+    } else {
+      // Element not ready yet, retry after a short delay
+      displayTimer = setTimeout(() => {
+        initializeSlot()
+      }, 50)
     }
 
     // Cleanup
     return () => {
+      if (displayTimer) {
+        clearTimeout(displayTimer)
+      }
       if (autoRefresh) {
         cleanupRefresh(slotId)
       }

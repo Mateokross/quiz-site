@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import AdSlot from './AdSlot'
-import { useAdManager } from '../../hooks/useAdManager'
 import { AD_SIZES } from '../../constants/adConfig'
 import { calculateMaxDimensions } from '../../utils/adHelpers'
 
@@ -11,10 +10,9 @@ import { calculateMaxDimensions } from '../../utils/adHelpers'
  * Hides container when no fill
  */
 export default function AdBottomBanner() {
-  const { isMobile } = useAdManager()
   const [renderedSize, setRenderedSize] = useState(null)
 
-  const sizes = isMobile ? AD_SIZES.BOTTOM_BANNER.mobile : AD_SIZES.BOTTOM_BANNER.desktop
+  const sizes = AD_SIZES.BOTTOM_BANNER
 
   // Calculate container dimensions based on ad sizes
   const { maxWidth, maxHeight } = calculateMaxDimensions(sizes)

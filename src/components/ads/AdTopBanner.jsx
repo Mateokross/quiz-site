@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import AdSlot from './AdSlot'
-import { useAdManager } from '../../hooks/useAdManager'
 import { AD_SIZES } from '../../constants/adConfig'
 
 /**
@@ -12,10 +11,9 @@ export default function AdTopBanner({
   backgroundColor = null,
   onHeightChange = null 
 }) {
-  const { isMobile } = useAdManager()
   const [adHeight, setAdHeight] = useState(null)
 
-  const sizes = isMobile ? AD_SIZES.TOP_BANNER.mobile : AD_SIZES.TOP_BANNER.desktop
+  const sizes = AD_SIZES.TOP_BANNER
 
   const handleSlotRender = (event) => {
     if (!event.isEmpty && event.size) {

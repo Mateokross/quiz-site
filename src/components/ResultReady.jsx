@@ -14,10 +14,12 @@ export default function ResultReady({
   const { refreshAllSlots } = useAdManager()
 
   // Refresh ads when component mounts
+  // Use longer delay to ensure sidebar slots are registered and displayed
   useEffect(() => {
     const timer = setTimeout(() => {
-      refreshAllSlots()
-    }, 100)
+      // Force refresh sidebar slots to ensure they show up
+      refreshAllSlots(false, ['ad-sidebar-left', 'ad-sidebar-right'])
+    }, 300)
     return () => clearTimeout(timer)
   }, [refreshAllSlots])
 
@@ -34,7 +36,8 @@ export default function ResultReady({
       <AdSidebar position="right" />
 
       {/* Top banner */}
-      <div className="w-full fixed top-0 z-20">
+      {/* Add padding on sides when sidebars are visible (xl breakpoint) to account for sidebar width */}
+      <div className="w-full fixed top-0 z-20 xl:pl-[300px] xl:pr-[300px]">
         <AdTopBanner />
       </div>
 

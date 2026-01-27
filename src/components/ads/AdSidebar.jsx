@@ -6,11 +6,12 @@ import { calculateMaxDimensions } from '../../utils/adHelpers'
 
 /**
  * Sidebar ad component (left or right)
- * Fixed position, follows scroll
- * Desktop only: 300x250 primary, 160x600 fallback
+ * Fixed position, positioned at bottom of viewport
+ * Desktop only: 300x600, 160x600, 120x600
  * Visible at xl breakpoint (1280px+) with conditional loading
+ * Sidebars reduce horizontal space available for top banner/navbar
  */
-export default function AdSidebar({ position = 'left', navbarTopOffset = 0 }) {
+export default function AdSidebar({ position = 'left' }) {
   const { isVisible, hasSpace } = useSidebarVisibility(AD_BREAKPOINTS.XL)
   const [renderedSize, setRenderedSize] = useState(null)
   
@@ -18,11 +19,8 @@ export default function AdSidebar({ position = 'left', navbarTopOffset = 0 }) {
   const slotId = position === 'left' ? 'ad-sidebar-left' : 'ad-sidebar-right'
   
   // Calculate container dimensions based on ad sizes
-  const { maxWidth, maxHeight } = calculateMaxDimensions(sizes)
-  const [containerWidth, containerHeight] = renderedSize || [maxWidth, maxHeight]
-  
-  // Top position: navbar top offset (which includes ad height + navbar content)
-  const topPosition = navbarTopOffset > 0 ? `${navbarTopOffset}px` : '90px'
+  const { maxWidth } = calculateMaxDimensions(sizes)
+  const containerWidth = renderedSize ? renderedSize[0] : maxWidth
 
   // Only load ad if viewport is wide enough (CSS handles visibility via hidden xl:block)
   // Both checks evaluate to the same threshold (1280px) but represent different concepts
@@ -35,11 +33,9 @@ export default function AdSidebar({ position = 'left', navbarTopOffset = 0 }) {
 
   return (
     <div 
-      className={`hidden xl:block fixed ${position === 'left' ? 'left-0' : 'right-0'} bottom-0 z-10 flex items-center ${alignmentClass}`}
+      className={`hidden xl:block fixed ${position === 'left' ? 'left-0' : 'right-0'} bottom-0 z-[30] flex items-end ${alignmentClass}`}
       style={{ 
-        top: topPosition,
         width: `${containerWidth}px`,
-        height: `${containerHeight}px`,
       }}
     >
       <AdSlot
