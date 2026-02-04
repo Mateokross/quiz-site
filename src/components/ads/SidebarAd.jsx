@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdContainer from '../AdContainer'
+import { AD_UNIT_PATHS } from '../../config/adUnits'
 
 /**
  * Sidebar Ad Component
@@ -14,9 +15,9 @@ export default function SidebarAd({ position = 'left' }) {
     const updateVisibility = () => {
       const width = window.innerWidth
       
-      // Only show sidebar ads on screens wider than 1200px
+      // Only show sidebar ads on screens wider than 1000px
       // This ensures there's enough space for content + 2 sidebars
-      setIsVisible(width >= 1200)
+      setIsVisible(width >= 1000)
 
       const sizes = []
       
@@ -24,7 +25,7 @@ export default function SidebarAd({ position = 'left' }) {
       if (width >= 1400) {
         sizes.push([300, 600])
       }
-      if (width >= 1200) {
+      if (width >= 1000) {
         sizes.push([160, 600], [120, 600])
       }
 
@@ -40,6 +41,7 @@ export default function SidebarAd({ position = 'left' }) {
   if (!isVisible || optimalSizes.length === 0) return null
 
   const divId = position === 'left' ? 'sidebar-ad-left' : 'sidebar-ad-right'
+  const adUnitPath = position === 'left' ? AD_UNIT_PATHS.SIDEBAR_LEFT : AD_UNIT_PATHS.SIDEBAR_RIGHT
 
   return (
     <div
@@ -56,6 +58,7 @@ export default function SidebarAd({ position = 'left' }) {
     >
       <AdContainer
         divId={divId}
+        adUnitPath={adUnitPath}
         sizes={optimalSizes}
         minWidth={120}
         minHeight={600}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdContainer from '../AdContainer'
+import { AD_UNIT_PATHS } from '../../config/adUnits'
 
 /**
  * Bottom Banner Ad Component
@@ -45,6 +46,10 @@ export default function BottomBannerAd() {
 
   if (optimalSizes.length === 0) return null
 
+  // Calculate min dimensions from the first (largest) size
+  const minWidth = optimalSizes[0]?.[0] || 300
+  const minHeight = optimalSizes[0]?.[1] || 50
+
   return (
     <div
       style={{
@@ -64,7 +69,10 @@ export default function BottomBannerAd() {
     >
       <AdContainer
         divId="bottom-banner-ad"
+        adUnitPath={AD_UNIT_PATHS.BOTTOM_BANNER}
         sizes={optimalSizes}
+        minWidth={minWidth}
+        minHeight={minHeight}
         style={{
           display: 'flex',
           justifyContent: 'center',

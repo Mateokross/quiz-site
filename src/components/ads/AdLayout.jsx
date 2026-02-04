@@ -21,16 +21,17 @@ export default function AdLayout({
   const [interstitialVisible, setInterstitialVisible] = useState(false)
   const [shouldRefresh, setShouldRefresh] = useState(0)
 
-  // Auto-refresh ads every 60 seconds
+  // Auto-refresh ads every 15 seconds (demo mode - production should be 60s)
   useEffect(() => {
     const refreshInterval = setInterval(() => {
       // Only refresh if interstitial is not visible
       if (!interstitialVisible && window.googletag) {
+        console.log('🔄 Auto-refreshing all ads...')
         window.googletag.cmd.push(() => {
           window.googletag.pubads().refresh()
         })
       }
-    }, 60000) // 60 seconds
+    }, 15000) // 15 seconds for demo
 
     return () => clearInterval(refreshInterval)
   }, [interstitialVisible])

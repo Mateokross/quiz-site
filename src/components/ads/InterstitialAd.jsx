@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdContainer from '../AdContainer'
+import { AD_UNIT_PATHS } from '../../config/adUnits'
 
 /**
  * Interstitial Ad Component
@@ -41,12 +42,12 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
   }, [])
 
   useEffect(() => {
-    // Show interstitial after 30 seconds
+    // Show interstitial after 10 seconds (demo mode)
     const initialTimer = setTimeout(() => {
       setIsVisible(true)
       setShowCloseButton(true)
       if (onAdLoad) onAdLoad()
-    }, 30000)
+    }, 10000)
 
     return () => clearTimeout(initialTimer)
   }, [onAdLoad])
@@ -125,6 +126,7 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
         )}
         <AdContainer
           divId="interstitial-ad"
+          adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
           sizes={optimalSizes}
           style={{
             display: 'flex',

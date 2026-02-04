@@ -130,10 +130,7 @@ export default function Results({
       showInterstitial={true}
       topBannerFixed={true}
     >
-      <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
-      style={{ backgroundColor }}
-    >
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 py-16" style={{ backgroundColor }}>
       <div className="max-w-2xl mx-auto w-full text-center">
         <div 
           ref={resultsRef}
@@ -423,10 +420,7 @@ export default function Results({
             </div>
           </div>
       </div>
-    </div>
-    </AdLayout>
-  )
-}
+
       <style>{`
         @keyframes fadeIn {
           from {
@@ -455,6 +449,8 @@ export default function Results({
           animation: slideUp 0.3s ease-out;
         }
       `}</style>
-    </div>
+      </div>
+      </div>
+    </AdLayout>
   )
 }

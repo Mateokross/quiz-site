@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdContainer from '../AdContainer'
+import { AD_UNIT_PATHS } from '../../config/adUnits'
 
 /**
  * Top Banner Ad Component
@@ -71,11 +72,18 @@ export default function TopBannerAd({ isFixed = false, insideNavbar = false }) {
         width: '100%',
       }
 
+  // Calculate min dimensions from the first (largest) size
+  const minWidth = optimalSizes[0]?.[0] || 300
+  const minHeight = optimalSizes[0]?.[1] || 50
+
   return (
     <div style={containerStyle}>
       <AdContainer
         divId="top-banner-ad"
+        adUnitPath={AD_UNIT_PATHS.TOP_BANNER}
         sizes={optimalSizes}
+        minWidth={minWidth}
+        minHeight={minHeight}
         style={{
           display: 'flex',
           justifyContent: 'center',
