@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, shareOnWhatsApp, downloadResultImage, shareResult } from '../utils/shareResult'
+import AdLayout from './ads/AdLayout'
 
 export default function Results({ 
   resultCategory, 
@@ -122,7 +123,14 @@ export default function Results({
   }
 
   return (
-    <div 
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={true}
+    >
+      <div 
       className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
       style={{ backgroundColor }}
     >
@@ -414,10 +422,11 @@ export default function Results({
               </div>
             </div>
           </div>
-        </div>
-
       </div>
-
+    </div>
+    </AdLayout>
+  )
+}
       <style>{`
         @keyframes fadeIn {
           from {

@@ -1,3 +1,5 @@
+import AdLayout from './ads/AdLayout'
+
 export default function ResultReady({ 
   onContinue,
   accentColor = '#000000',
@@ -6,7 +8,14 @@ export default function ResultReady({
   selectedButtonColor = '#000000'
 }) {
   return (
-    <div 
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={true}
+    >
+      <div 
       className="min-h-screen flex flex-col items-center justify-center p-4"
       style={{ backgroundColor }}
     >
@@ -73,5 +82,6 @@ export default function ResultReady({
         }
       `}</style>
     </div>
+    </AdLayout>
   )
 }

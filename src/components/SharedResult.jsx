@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner'
+import AdLayout from './ads/AdLayout'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -100,7 +101,14 @@ export default function SharedResult() {
   const backgroundColor = quizConfig.theme?.backgroundColor || '#FFFFFF'
 
   return (
-    <div 
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={true}
+    >
+      <div 
       className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
       style={{ backgroundColor }}
     >
@@ -157,5 +165,6 @@ export default function SharedResult() {
         }
       `}</style>
     </div>
+    </AdLayout>
   )
 }

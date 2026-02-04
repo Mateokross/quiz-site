@@ -5,6 +5,10 @@ import Question from './Question'
 import Results from './Results'
 import LoadingSpinner from './LoadingSpinner'
 import ResultReady from './ResultReady'
+import TopBannerAd from './ads/TopBannerAd'
+import BottomBannerAd from './ads/BottomBannerAd'
+import SidebarAd from './ads/SidebarAd'
+import InterstitialAd from './ads/InterstitialAd'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -153,7 +157,12 @@ export default function Quiz() {
   }
 
   return (
-    <div style={{ backgroundColor }}>
+    <>
+      <BottomBannerAd />
+      <SidebarAd position="left" />
+      <SidebarAd position="right" />
+      <InterstitialAd />
+      <div style={{ backgroundColor }}>
       <div 
         className="sticky top-0 z-10 backdrop-blur-sm border-b border-gray-200"
         style={{ 
@@ -183,6 +192,7 @@ export default function Quiz() {
             />
           </div>
         </div>
+        <TopBannerAd insideNavbar={true} />
       </div>
 
       {quizConfig.questions.map((question, index) => {
@@ -202,5 +212,6 @@ export default function Quiz() {
         )
       })}
     </div>
+    </>
   )
 }

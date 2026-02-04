@@ -1,10 +1,19 @@
+import AdLayout from './ads/AdLayout'
+
 export default function LoadingSpinner({ 
   accentColor = '#000000',
   backgroundColor = '#FFFFFF',
   progressColor = '#3B82F6'
 }) {
   return (
-    <div 
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={true}
+    >
+      <div 
       className="min-h-screen flex flex-col items-center justify-center p-4"
       style={{ backgroundColor }}
     >
@@ -49,5 +58,6 @@ export default function LoadingSpinner({
         }
       `}</style>
     </div>
+    </AdLayout>
   )
 }
