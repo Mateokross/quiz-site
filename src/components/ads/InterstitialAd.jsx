@@ -92,10 +92,6 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
       <div
         style={{
           position: 'relative',
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
         {showCloseButton && (
@@ -103,37 +99,47 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
             onClick={handleClose}
             style={{
               position: 'absolute',
-              top: '-10px',
-              right: '-10px',
+              top: '-16px',
+              right: '-16px',
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: '#333',
-              color: 'white',
-              border: 'none',
+              backgroundColor: '#fff',
+              color: '#333',
+              border: '2px solid #333',
               cursor: 'pointer',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              fontSize: '18px',
+              fontSize: '20px',
               fontWeight: 'bold',
-              zIndex: 10000,
+              zIndex: 10001,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
             }}
             aria-label="Close ad"
           >
             ×
           </button>
         )}
-        <AdContainer
-          divId="interstitial-ad"
-          adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
-          sizes={optimalSizes}
+        <div
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           }}
-        />
+        >
+          <AdContainer
+            divId="interstitial-ad"
+            adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
+            sizes={optimalSizes}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          />
+        </div>
       </div>
     </div>
   )

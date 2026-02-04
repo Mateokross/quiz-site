@@ -124,7 +124,7 @@ export default function AdContainer({
           minHeight: `${minHeight}px`,
         }}
       />
-      {/* Placeholder ad - will be replaced by real GPT ads */}
+      {/* Visual placeholder for demo - shows how ads will appear */}
       <div
         style={{
           position: 'absolute',
@@ -132,29 +132,46 @@ export default function AdContainer({
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: '#f0f0f0',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           border: '2px solid #ddd',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           fontFamily: 'Arial, sans-serif',
-          color: '#666',
+          color: '#fff',
           zIndex: -1,
+          boxShadow: 'inset 0 0 30px rgba(0,0,0,0.1)',
         }}
       >
-        <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
-          📢 Advertisement
+        <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+          🎉 Sample Ad
         </div>
-        <div style={{ fontSize: '11px', opacity: 0.7 }}>
+        <div style={{ fontSize: '16px', marginBottom: '8px', opacity: 0.9 }}>
+          Your Ad Here
+        </div>
+        <div style={{ fontSize: '12px', opacity: 0.7, marginBottom: '12px' }}>
           {divId}
         </div>
-        <div style={{ fontSize: '10px', opacity: 0.5, marginTop: '4px' }}>
-          GPT Ad Slot
+        <div style={{ 
+          backgroundColor: 'rgba(255,255,255,0.2)', 
+          padding: '8px 16px', 
+          borderRadius: '20px',
+          fontSize: '12px',
+          fontWeight: 'bold'
+        }}>
+          Click to Learn More →
         </div>
         {refreshCount > 0 && (
-          <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '8px', color: '#0066cc', fontWeight: 'bold' }}>
-            🔄 Refreshed: {refreshCount} time{refreshCount !== 1 ? 's' : ''}
+          <div style={{ 
+            fontSize: '10px', 
+            marginTop: '12px', 
+            backgroundColor: 'rgba(255,255,255,0.3)',
+            padding: '4px 8px',
+            borderRadius: '10px',
+            fontWeight: 'bold'
+          }}>
+            🔄 Refreshed: {refreshCount}x
           </div>
         )}
       </div>

@@ -58,13 +58,10 @@ export default function BottomBannerAd() {
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 1000,
-        backgroundColor: 'white',
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '8px 0',
-        boxShadow: '0 -2px 4px rgba(0,0,0,0.1)',
       }}
     >
       <AdContainer
