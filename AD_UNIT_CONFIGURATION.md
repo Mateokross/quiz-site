@@ -6,9 +6,15 @@ This guide explains how to configure Google Ad Manager ad units for the quiz sit
 
 ## Current Placeholder Configuration
 
-All ad components currently use the base ad unit path: `/21775744923/quizzs`
+The app is currently configured to use **GPT documentation sample/test inventory** (safe for local/dev testing), via `src/config/adUnits.js`:
 
-This needs to be replaced with your actual Google Ad Manager network code and ad unit structure.
+- `TOP_BANNER`: `/6355419/Travel/Asia`
+- `BOTTOM_BANNER`: `/6355419/Travel/Europe/France/Paris`
+- `SIDEBAR_LEFT`: `/6355419/Travel`
+- `SIDEBAR_RIGHT`: `/6355419/Travel`
+- `INTERSTITIAL`: `/6355419/Travel`
+
+For production, replace these with ad unit paths from **your** Google Ad Manager network.
 
 ## Required Ad Units
 
@@ -16,31 +22,31 @@ You need to create the following ad units in Google Ad Manager:
 
 ### 1. Top Banner Ad Unit
 - **Component**: `src/components/ads/TopBannerAd.jsx`
-- **Current Path**: `/21775744923/quizzs`
+- **Current Path**: `/6355419/Travel/Asia` (GPT sample/test inventory)
 - **Suggested Path**: `/YOUR_NETWORK_CODE/quizzs/top-banner`
 - **Sizes**: 728x90, 300x50, 468x60, 320x100, 320x50, 300x100, 234x60
 
 ### 2. Bottom Banner Ad Unit
 - **Component**: `src/components/ads/BottomBannerAd.jsx`
-- **Current Path**: `/21775744923/quizzs`
+- **Current Path**: `/6355419/Travel/Europe/France/Paris` (GPT sample/test inventory)
 - **Suggested Path**: `/YOUR_NETWORK_CODE/quizzs/bottom-banner`
 - **Sizes**: 728x90, 970x90, 300x50, 468x60, 320x100, 320x50, 300x100, 234x60
 
 ### 3. Sidebar Left Ad Unit
 - **Component**: `src/components/ads/SidebarAd.jsx` (position="left")
-- **Current Path**: `/21775744923/quizzs`
+- **Current Path**: `/6355419/Travel` (GPT sample/test inventory)
 - **Suggested Path**: `/YOUR_NETWORK_CODE/quizzs/sidebar-left`
 - **Sizes**: 160x600, 120x600, 300x600
 
 ### 4. Sidebar Right Ad Unit
 - **Component**: `src/components/ads/SidebarAd.jsx` (position="right")
-- **Current Path**: `/21775744923/quizzs`
+- **Current Path**: `/6355419/Travel` (GPT sample/test inventory)
 - **Suggested Path**: `/YOUR_NETWORK_CODE/quizzs/sidebar-right`
 - **Sizes**: 160x600, 120x600, 300x600
 
 ### 5. Interstitial Ad Unit
 - **Component**: `src/components/ads/InterstitialAd.jsx`
-- **Current Path**: `/21775744923/quizzs`
+- **Current Path**: `/6355419/Travel` (GPT sample/test inventory)
 - **Suggested Path**: `/YOUR_NETWORK_CODE/quizzs/interstitial`
 - **Sizes**: 480x320, 320x480, 336x280, 300x250
 

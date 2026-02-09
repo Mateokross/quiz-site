@@ -1,10 +1,12 @@
-// Test ad unit configuration using Google's demo ad network
-// Network ID 6499 is Google's public demo network that should display sample ads
+// Test ad unit configuration using the GPT documentation sample inventory.
+// These sample paths are commonly used in GPT examples and are suitable for local/dev testing.
 
 export const AD_UNIT_PATHS = {
-  TOP_BANNER: '/6499/example/banner',
-  BOTTOM_BANNER: '/6499/example/banner',
-  SIDEBAR_LEFT: '/6499/example/skyscraper',
-  SIDEBAR_RIGHT: '/6499/example/skyscraper',
-  INTERSTITIAL: '/6499/example/interstitial',
+  // GPT documentation sample inventory (commonly used for test/demo tags).
+  // See: https://developers.google.com/publisher-tag/guides/get-started
+  TOP_BANNER: '/6355419/Travel/Asia',
+  BOTTOM_BANNER: '/6355419/Travel/Europe/France/Paris',
+  SIDEBAR_LEFT: '/6355419/Travel',
+  SIDEBAR_RIGHT: '/6355419/Travel',
+  INTERSTITIAL: '/6355419/Travel',
 }
