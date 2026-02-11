@@ -91,6 +91,13 @@ export default function AdContainer({
             onSlotDefined(slot)
           }
 
+          // Enable services if not already enabled
+          // This must be called before display() for ads to fetch
+          if (!window.googletag.pubadsReady) {
+            console.log('Enabling GPT services...')
+            window.googletag.enableServices()
+          }
+
           console.log(`Displaying ad slot: ${divId}`)
           window.googletag.display(divId)
         }

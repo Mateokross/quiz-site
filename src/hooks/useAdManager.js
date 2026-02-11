@@ -21,8 +21,8 @@ export function useAdManager() {
         // Enable Single Request Architecture
         window.googletag.pubads().enableSingleRequest()
         
-        // Enable services
-        window.googletag.enableServices()
+        // Note: enableServices() will be called in AdContainer after slots are defined
+        // This is required for SRA to work correctly
         
         setIsGPTReady(true)
       })
