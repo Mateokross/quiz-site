@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to configure Google Ad Manager ad units for the quiz site. The current implementation uses placeholder ad unit paths that need to be replaced with your actual Google Ad Manager configuration.
+This guide explains how to configure Google Ad Manager ad units for the quiz site. The current implementation uses placeholder ad unit paths that need to be replaced with your actual Google Ad Manager configuration
 
 ## Current Placeholder Configuration
 
