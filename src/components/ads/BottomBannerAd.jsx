@@ -55,10 +55,9 @@ export default function BottomBannerAd() {
       style={{
         position: 'fixed',
         bottom: 0,
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: 0,
+        right: 0,
         zIndex: 1000,
-        width: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -71,9 +70,7 @@ export default function BottomBannerAd() {
         minWidth={minWidth}
         minHeight={minHeight}
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          maxWidth: `${minWidth}px`,
         }}
       />
     </div>

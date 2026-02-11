@@ -115,8 +115,8 @@ export default function AdContainer({
     <div
       ref={containerRef}
       style={{
-        minWidth: `${minWidth}px`,
-        minHeight: `${minHeight}px`,
+        width: `${minWidth}px`,
+        height: `${minHeight}px`,
         position: 'relative',
         ...style,
       }}
@@ -127,8 +127,9 @@ export default function AdContainer({
         style={{
           width: '100%',
           height: '100%',
-          minWidth: `${minWidth}px`,
-          minHeight: `${minHeight}px`,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       />
       {/* Visual placeholder for demo - shows how ads will appear */}
