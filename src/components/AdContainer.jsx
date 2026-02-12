@@ -17,8 +17,7 @@ export default function AdContainer({
   const containerRef = useRef(null)
   const [isVisible, setIsVisible] = useState(true)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
-  const [refreshCount, setRefreshCount] = useState(0)
-  const [lastRefresh, setLastRefresh] = useState(Date.now())
+
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -77,9 +76,7 @@ export default function AdContainer({
                 size: event.size,
                 advertiserId: event.advertiserId
               })
-              // Update refresh counter
-              setRefreshCount(prev => prev + 1)
-              setLastRefresh(Date.now())
+
               // Don't hide on empty for demo purposes
               // if (event.isEmpty) {
               //   setIsVisible(false)
@@ -132,57 +129,7 @@ export default function AdContainer({
           alignItems: 'center',
         }}
       />
-      {/* Visual placeholder for demo - shows how ads will appear */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          border: '2px solid #ddd',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: 'Arial, sans-serif',
-          color: '#fff',
-          zIndex: -1,
-          boxShadow: 'inset 0 0 30px rgba(0,0,0,0.1)',
-        }}
-      >
-        <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-          🎉 Sample Ad
-        </div>
-        <div style={{ fontSize: '16px', marginBottom: '8px', opacity: 0.9 }}>
-          Your Ad Here
-        </div>
-        <div style={{ fontSize: '12px', opacity: 0.7, marginBottom: '12px' }}>
-          {divId}
-        </div>
-        <div style={{ 
-          backgroundColor: 'rgba(255,255,255,0.2)', 
-          padding: '8px 16px', 
-          borderRadius: '20px',
-          fontSize: '12px',
-          fontWeight: 'bold'
-        }}>
-          Click to Learn More →
-        </div>
-        {refreshCount > 0 && (
-          <div style={{ 
-            fontSize: '10px', 
-            marginTop: '12px', 
-            backgroundColor: 'rgba(255,255,255,0.3)',
-            padding: '4px 8px',
-            borderRadius: '10px',
-            fontWeight: 'bold'
-          }}>
-            🔄 Refreshed: {refreshCount}x
-          </div>
-        )}
-      </div>
+
     </div>
   )
 }
