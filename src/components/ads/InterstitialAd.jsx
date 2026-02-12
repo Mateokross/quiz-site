@@ -121,25 +121,19 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
             ×
           </button>
         )}
-        <div
+        <AdContainer
+          divId="interstitial-ad"
+          adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
+          sizes={optimalSizes}
           style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             backgroundColor: 'white',
-            padding: '20px',
             borderRadius: '8px',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           }}
-        >
-          <AdContainer
-            divId="interstitial-ad"
-            adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
-            sizes={optimalSizes}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          />
-        </div>
+        />
       </div>
     </div>
   )
