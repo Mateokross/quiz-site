@@ -125,6 +125,8 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
           divId="interstitial-ad"
           adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
           sizes={optimalSizes}
+          minWidth={optimalSizes[0]?.[0] || 300}
+          minHeight={optimalSizes[0]?.[1] || 250}
           style={{
             display: 'flex',
             justifyContent: 'center',
