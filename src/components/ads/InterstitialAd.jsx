@@ -131,7 +131,6 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'white',
           }}
         />
       </div>
