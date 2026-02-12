@@ -8,6 +8,6 @@ export const AD_UNIT_PATHS = {
   TOP_BANNER: '/6355419/Travel/Europe/France/Paris',
   BOTTOM_BANNER: '/6355419/Travel/Asia',
   SIDEBAR_LEFT: '/6355419/Travel/Europe',
-  SIDEBAR_RIGHT: '/6355419/Travel/Asia/China',
+  SIDEBAR_RIGHT: '/6355419/Travel/Europe/France/Paris',
   INTERSTITIAL: '/6355419/Travel/Europe/France',
 }
