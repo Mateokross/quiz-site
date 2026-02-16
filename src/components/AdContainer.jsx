@@ -17,6 +17,8 @@ export default function AdContainer({
   const containerRef = useRef(null)
   const [isVisible, setIsVisible] = useState(true)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const [actualAdSize, setActualAdSize] = useState({ width: minWidth, height: minHeight })
+  const [isEmpty, setIsEmpty] = useState(false)
 
 
   useEffect(() => {
@@ -77,10 +79,22 @@ export default function AdContainer({
                 advertiserId: event.advertiserId
               })
 
-              // Don't hide on empty for demo purposes
-              // if (event.isEmpty) {
-              //   setIsVisible(false)
-              // }
+              // Hide container if no fill
+              if (event.isEmpty) {
+                console.log(`No fill for ${divId}, hiding container`)
+                setIsEmpty(true)
+                setIsVisible(false)
+              } else {
+                setIsEmpty(false)
+                setIsVisible(true)
+                
+                // Update container size to match actual ad size
+                if (event.size && event.size.length === 2) {
+                  const [width, height] = event.size
+                  console.log(`Resizing ${divId} to ${width}x${height}`)
+                  setActualAdSize({ width, height })
+                }
+              }
             }
           })
 
@@ -112,9 +126,10 @@ export default function AdContainer({
     <div
       ref={containerRef}
       style={{
-        width: `${minWidth}px`,
-        height: `${minHeight}px`,
+        width: isEmpty ? '0px' : `${actualAdSize.width}px`,
+        height: isEmpty ? '0px' : `${actualAdSize.height}px`,
         position: 'relative',
+        display: isEmpty ? 'none' : 'block',
         ...style,
       }}
     >

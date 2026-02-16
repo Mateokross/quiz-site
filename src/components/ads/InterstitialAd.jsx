@@ -11,6 +11,7 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
   const [isVisible, setIsVisible] = useState(false)
   const [showCloseButton, setShowCloseButton] = useState(false)
   const [optimalSizes, setOptimalSizes] = useState([])
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     const updateSizes = () => {
@@ -57,11 +58,23 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
     setShowCloseButton(false)
     if (onAdClose) onAdClose()
 
-    // Show again after 2 minutes
+    // Show again after 2 minutes with refreshed ad
     setTimeout(() => {
+      setRefreshKey(prev => prev + 1) // Force ad refresh
       setIsVisible(true)
       setShowCloseButton(true)
       if (onAdLoad) onAdLoad()
+      
+      // Refresh the ad slot
+      if (window.googletag) {
+        window.googletag.cmd.push(() => {
+          const slots = window.googletag.pubads().getSlots()
+          const interstitialSlot = slots.find(slot => slot.getSlotElementId() === 'interstitial-ad')
+          if (interstitialSlot) {
+            window.googletag.pubads().refresh([interstitialSlot])
+          }
+        })
+      }
     }, 120000) // 2 minutes
   }
 
@@ -122,6 +135,7 @@ export default function InterstitialAd({ onAdLoad, onAdClose }) {
           </button>
         )}
         <AdContainer
+          key={refreshKey}
           divId="interstitial-ad"
           adUnitPath={AD_UNIT_PATHS.INTERSTITIAL}
           sizes={optimalSizes}
