@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuiz } from '../hooks/useQuiz'
+import { useMetaPixel } from '../hooks/useMetaPixel'
 import Question from './Question'
 import Results from './Results'
 import LoadingSpinner from './LoadingSpinner'
@@ -36,6 +37,14 @@ export default function Quiz() {
     revealResult,
     resetQuiz,
   } = useQuiz(quizConfig)
+
+  // Track Meta Pixel events
+  useMetaPixel(
+    currentQuestionIndex,
+    quizConfig?.questions?.length || 0,
+    answers,
+    quizConfig
+  )
 
   useEffect(() => {
     // Load quiz config
