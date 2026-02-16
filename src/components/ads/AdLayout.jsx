@@ -79,10 +79,10 @@ export default function AdLayout({
 
   return (
     <>
-      {showTopBanner && (
+      {showTopBanner && !topBannerInsideNavbar && (
         <TopBannerAd 
           isFixed={topBannerFixed} 
-          insideNavbar={topBannerInsideNavbar}
+          insideNavbar={false}
         />
       )}
       

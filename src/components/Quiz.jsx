@@ -7,9 +7,7 @@ import Results from './Results'
 import LoadingSpinner from './LoadingSpinner'
 import ResultReady from './ResultReady'
 import TopBannerAd from './ads/TopBannerAd'
-import BottomBannerAd from './ads/BottomBannerAd'
-import SidebarAd from './ads/SidebarAd'
-import InterstitialAd from './ads/InterstitialAd'
+import AdLayout from './ads/AdLayout'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -166,11 +164,14 @@ export default function Quiz() {
   }
 
   return (
-    <>
-      <BottomBannerAd />
-      <SidebarAd position="left" />
-      <SidebarAd position="right" />
-      <InterstitialAd />
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={false}
+      topBannerInsideNavbar={true}
+    >
       <div style={{ backgroundColor }}>
       <div 
         className="sticky top-0 z-10 backdrop-blur-sm border-b border-gray-200"
@@ -221,6 +222,6 @@ export default function Quiz() {
         )
       })}
     </div>
-    </>
+    </AdLayout>
   )
 }
