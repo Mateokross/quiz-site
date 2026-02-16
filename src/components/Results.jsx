@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, shareOnWhatsApp, downloadResultImage, shareResult } from '../utils/shareResult'
+import { trackMetaCustomEvent, META_EVENTS } from '../config/metaPixel'
 import AdLayout from './ads/AdLayout'
 
 export default function Results({ 
@@ -70,20 +71,44 @@ export default function Results({
   const handleShareResult = async () => {
     const success = await shareResult(result?.title || '', quizTitle, quizId, resultCategory)
     if (success) {
+      trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+        quiz_id: quizId,
+        quiz_title: quizTitle,
+        result_category: resultCategory,
+        share_platform: 'native',
+      })
       setShareResultTooltip('Shared!')
       setTimeout(() => setShareResultTooltip('Share result'), 2000)
     }
   }
 
   const handleTwitterShare = () => {
+    trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+      quiz_id: quizId,
+      quiz_title: quizTitle,
+      result_category: resultCategory,
+      share_platform: 'twitter',
+    })
     shareOnTwitter(result?.title || '', quizTitle, quizId, resultCategory)
   }
 
   const handleFacebookShare = () => {
+    trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+      quiz_id: quizId,
+      quiz_title: quizTitle,
+      result_category: resultCategory,
+      share_platform: 'facebook',
+    })
     shareOnFacebook(quizId, resultCategory)
   }
 
   const handleWhatsAppShare = () => {
+    trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+      quiz_id: quizId,
+      quiz_title: quizTitle,
+      result_category: resultCategory,
+      share_platform: 'whatsapp',
+    })
     shareOnWhatsApp(result?.title || '', quizTitle, quizId, resultCategory)
   }
 

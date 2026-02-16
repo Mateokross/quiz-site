@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { calculateResult } from '../utils/calculateResult'
+import { trackMetaCustomEvent, META_EVENTS } from '../config/metaPixel'
 
 export function useQuiz(quizConfig) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -98,6 +99,15 @@ export function useQuiz(quizConfig) {
   }, [answers, quizConfig])
 
   const triggerResultReveal = useCallback(() => {
+    // Track QuizCompleted event
+    if (quizConfig) {
+      trackMetaCustomEvent(META_EVENTS.QUIZ_COMPLETED, {
+        quiz_id: quizConfig.id || 'unknown',
+        quiz_title: quizConfig.title || 'Unknown Quiz',
+        total_questions: quizConfig.questions?.length || 0,
+      })
+    }
+
     // Add delay before showing loading screen (similar to question transition delay)
     setTimeout(() => {
       setResultRevealState('loading')
@@ -116,7 +126,16 @@ export function useQuiz(quizConfig) {
 
   const revealResult = useCallback(() => {
     setResultRevealState('revealed')
-  }, [])
+    
+    // Track ResultViewed event
+    if (quizConfig && result) {
+      trackMetaCustomEvent(META_EVENTS.RESULT_VIEWED, {
+        quiz_id: quizConfig.id || 'unknown',
+        quiz_title: quizConfig.title || 'Unknown Quiz',
+        result_category: result,
+      })
+    }
+  }, [quizConfig, result])
 
   const handleAnswerSelect = useCallback((questionId, answerIndex) => {
     // Update answers state
