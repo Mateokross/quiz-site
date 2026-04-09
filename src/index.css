@@ -24,3 +24,19 @@ button:focus-visible {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+
+/* Center Google Publisher Tag ads within their containers */
+div[id$="-ad"] {
+  text-align: center !important;
+}
+
+div[id$="-ad"] > *,
+div[id$="-ad"] > div,
+div[id$="-ad"] > div > *,
+div[id$="-ad"] iframe,
+div[id$="-ad"] div[id^="google_ads_iframe"] {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: inline-block !important;
+  text-align: center !important;
+}

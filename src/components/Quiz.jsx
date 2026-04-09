@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuiz } from '../hooks/useQuiz'
+import { useMetaPixel } from '../hooks/useMetaPixel'
 import Question from './Question'
 import Results from './Results'
 import LoadingSpinner from './LoadingSpinner'
 import ResultReady from './ResultReady'
+import TopBannerAd from './ads/TopBannerAd'
+import AdLayout from './ads/AdLayout'
 
 // Import quiz configs
 import personalityQuizConfig from '../quiz-configs/personality-quiz.json'
@@ -32,6 +35,14 @@ export default function Quiz() {
     revealResult,
     resetQuiz,
   } = useQuiz(quizConfig)
+
+  // Track Meta Pixel events
+  useMetaPixel(
+    currentQuestionIndex,
+    quizConfig?.questions?.length || 0,
+    answers,
+    quizConfig
+  )
 
   useEffect(() => {
     // Load quiz config
@@ -153,7 +164,15 @@ export default function Quiz() {
   }
 
   return (
-    <div style={{ backgroundColor }}>
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={false}
+      topBannerInsideNavbar={true}
+    >
+      <div style={{ backgroundColor }}>
       <div 
         className="sticky top-0 z-10 backdrop-blur-sm border-b border-gray-200"
         style={{ 
@@ -183,6 +202,7 @@ export default function Quiz() {
             />
           </div>
         </div>
+        <TopBannerAd insideNavbar={true} />
       </div>
 
       {quizConfig.questions.map((question, index) => {
@@ -202,5 +222,6 @@ export default function Quiz() {
         )
       })}
     </div>
+    </AdLayout>
   )
 }

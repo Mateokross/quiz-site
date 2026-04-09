@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { copyUrl, copyText, shareOnTwitter, shareOnFacebook, shareOnWhatsApp, downloadResultImage, shareResult } from '../utils/shareResult'
+import { trackMetaCustomEvent, META_EVENTS } from '../config/metaPixel'
+import AdLayout from './ads/AdLayout'
 
 export default function Results({ 
   resultCategory, 
@@ -69,20 +71,44 @@ export default function Results({
   const handleShareResult = async () => {
     const success = await shareResult(result?.title || '', quizTitle, quizId, resultCategory)
     if (success) {
+      trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+        quiz_id: quizId,
+        quiz_title: quizTitle,
+        result_category: resultCategory,
+        share_platform: 'native',
+      })
       setShareResultTooltip('Shared!')
       setTimeout(() => setShareResultTooltip('Share result'), 2000)
     }
   }
 
   const handleTwitterShare = () => {
+    trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+      quiz_id: quizId,
+      quiz_title: quizTitle,
+      result_category: resultCategory,
+      share_platform: 'twitter',
+    })
     shareOnTwitter(result?.title || '', quizTitle, quizId, resultCategory)
   }
 
   const handleFacebookShare = () => {
+    trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+      quiz_id: quizId,
+      quiz_title: quizTitle,
+      result_category: resultCategory,
+      share_platform: 'facebook',
+    })
     shareOnFacebook(quizId, resultCategory)
   }
 
   const handleWhatsAppShare = () => {
+    trackMetaCustomEvent(META_EVENTS.QUIZ_SHARED, {
+      quiz_id: quizId,
+      quiz_title: quizTitle,
+      result_category: resultCategory,
+      share_platform: 'whatsapp',
+    })
     shareOnWhatsApp(result?.title || '', quizTitle, quizId, resultCategory)
   }
 
@@ -122,10 +148,14 @@ export default function Results({
   }
 
   return (
-    <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 py-16"
-      style={{ backgroundColor }}
+    <AdLayout
+      showTopBanner={true}
+      showBottomBanner={true}
+      showSidebars={true}
+      showInterstitial={true}
+      topBannerFixed={true}
     >
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 py-16" style={{ backgroundColor }}>
       <div className="max-w-2xl mx-auto w-full text-center">
         <div 
           ref={resultsRef}
@@ -414,8 +444,6 @@ export default function Results({
               </div>
             </div>
           </div>
-        </div>
-
       </div>
 
       <style>{`
@@ -446,6 +474,8 @@ export default function Results({
           animation: slideUp 0.3s ease-out;
         }
       `}</style>
-    </div>
+      </div>
+      </div>
+    </AdLayout>
   )
 }
